@@ -1,5 +1,5 @@
-EXENAME = mp_intro
-OBJS = main.o PNG.o HSLAPixel.o lodepng.o mp_intro.o
+EXENAME = intro
+OBJS = main.o PNG.o HSLAPixel.o lodepng.o intro.o
 
 CXX = clang++
 CXXFLAGS = $(CS225) -std=c++1y -stdlib=libc++ -c -g -O0 -Wall -Wextra -pedantic
@@ -33,8 +33,8 @@ $(EXENAME) : output_msg $(OBJS)
 main.o : main.cpp cs225/PNG.h cs225/HSLAPixel.h
 	$(CXX) $(CXXFLAGS) main.cpp
 
-mp_intro.o : mp_intro.cpp mp_intro.h
-	$(CXX) $(CXXFLAGS) mp_intro.cpp
+intro.o : intro.cpp intro.h
+	$(CXX) $(CXXFLAGS) intro.cpp
 
 PNG.o : cs225/PNG.cpp cs225/PNG.h cs225/HSLAPixel.h cs225/lodepng/lodepng.h
 	$(CXX) $(CXXFLAGS) cs225/PNG.cpp
@@ -46,13 +46,13 @@ lodepng.o : cs225/lodepng/lodepng.cpp cs225/lodepng/lodepng.h
 	$(CXX) $(CXXFLAGS) cs225/lodepng/lodepng.cpp
 
 
-test: output_msg catchmain.o tests.o PNG.o HSLAPixel.o lodepng.o mp_intro.o
-	$(LD) catchmain.o tests.o PNG.o HSLAPixel.o lodepng.o mp_intro.o $(LDFLAGS) -o test
+test: output_msg catchmain.o tests.o PNG.o HSLAPixel.o lodepng.o intro.o
+	$(LD) catchmain.o tests.o PNG.o HSLAPixel.o lodepng.o intro.o $(LDFLAGS) -o test
 
 catchmain.o : cs225/catch/catchmain.cpp cs225/catch/catch.hpp
 	$(CXX) $(CXXFLAGS) cs225/catch/catchmain.cpp
 
-tests.o : tests/test.cpp cs225/catch/catch.hpp mp_intro.cpp mp_intro.h
+tests.o : tests/test.cpp cs225/catch/catch.hpp intro.cpp intro.h
 	$(CXX) $(CXXFLAGS) tests.cpp
 
 clean :

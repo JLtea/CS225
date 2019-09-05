@@ -6,16 +6,20 @@
 
 void rotate(std::string inputFile, std::string outputFile) {
   // TODO: Part 2
-  cs225::PNG png, result;
+  cs225::PNG png;
   png.readFromFile(inputFile);
-  int centerY = (int) png.height/2;
-  for(int x = 0; x <= png.width; x++){
-    for(int y = 0; y <= png.height; y++) {
-      cs225::HSLAPixel & pixel =  result.getPixel(x,y);
-      pixel._copy(png.getPixel(x,height-y));
+  cs225::PNG * result = new cs225::PNG(png.width(), png.height());
+  for(unsigned int x = 0; x < png.width(); x++){
+    for(unsigned int y = 0; y < png.height(); y++) {
+      cs225::HSLAPixel & pixel = png.getPixel(x,y);
+      cs225::HSLAPixel & toCopy = result->getPixel(png.width() - x - 1,png.height() - y - 1);
+      toCopy.h = pixel.h;
+      toCopy.s = pixel.s;
+      toCopy.l = pixel.l;
+      toCopy.a = pixel.a;
     }
   }
-  png.writeToFile(outputFile);
+  result->writeToFile(outputFile);
 }
 
 cs225::PNG myArt(unsigned int width, unsigned int height) {
