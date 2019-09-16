@@ -1,7 +1,7 @@
 #include "Image.h"
 #include "cs225/HSLAPixel.h"
 #include "cs225/PNG.h"
-
+#include <iostream>
 
 
 // Lighten an Image by increasing the luminance of every pixel by 0.1.
@@ -132,20 +132,30 @@ void Image::grayscale(){
 // Rotates the color wheel by degrees.
 // Rotating in a positive direction increases the degree of the hue. This function ensures that the hue remains in the range [0, 360].
 void Image::rotateColor (double degrees){
-
-}
-//Illinify the image.
-void Image::illinify(){
     for (unsigned int x = 0; x<this->width();x++){
         for(unsigned int y = 0; y<this->height(); y++){
             cs225::HSLAPixel & pixel = this->getPixel(x,y);
-            if (pixel.h <= 113 || pixel.h >= 294) {
-                pixel.h = 11;
-            } else {
-                pixel.h = 216;
+            pixel.h += degrees;
+            if (pixel.h + degrees > 360){
+                pixel.h -= 360;
+            } else if(pixel.h + degrees < 0) {
+                pixel.h += 360;
             }
         }
     }
+}
+//Illinify the image.
+void Image::illinify(){
+    // for (unsigned int x = 0; x<this->width();x++){
+    //     for(unsigned int y = 0; y<this->height(); y++){
+    //         cs225::HSLAPixel & pixel = this->getPixel(x,y);
+    //         if (pixel.h <= 113 || pixel.h >= 294) {
+    //             pixel.h = 11;
+    //         } else {
+    //             pixel.h = 216;
+    //         }
+    //     }
+    // }
 }
 // Scale the Image by a given factor.
 
@@ -157,30 +167,15 @@ void Image::illinify(){
 // This function both resizes the Image and scales the contents.
 void Image::scale(double factor){
     cs225::PNG scaled(this->width()*factor, this->height()*factor);
-    if(factor>1){
         for (unsigned x = 0; x<this->width()*factor;x++) {
             for (unsigned y = 0; y<this->height()*factor; y++) {
-                cs225::HSLAPixel &pixel =this->getPixel(x,y);
-                for(unsigned f = 0; f < factor; f++){
-                    scaled.getPixel(x+f,y) = this->getPixel(x,y);
-                }
-                
+                scaled.getPixel(x,y) = this->getPixel(x/factor, y/factor);                
             }
         }
-    } else if (factor<1)
-    {
-        for (unsigned x = 0; x<this->width()*factor;x++) {
-            for (unsigned y = 0; y<this->height()*factor; y++) {
-                cs225::HSLAPixel &pixel =this->getPixel(x,y);
-                scaled.getPixel(x,y) = this->getPixel(x/factor,y);
-                
-            }
-        }
-    }
+
     this->resize(this->width()*factor,this->height()*factor);
-        for (unsigned x = 0; x<this->width()*factor;x++) {
-            for (unsigned y = 0; y<this->height()*factor; y++) {
-                cs225::HSLAPixel &pixel =this->getPixel(x,y);
+        for (unsigned x = 0; x<this->width();x++) {
+            for (unsigned y = 0; y<this->height(); y++) {
                 this->getPixel(x,y) = scaled.getPixel(x,y);
             }
         }

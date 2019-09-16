@@ -10,6 +10,7 @@ Image createRainbowImage() {
   Image png;
   png.resize(360, 100);
 
+  
   for (unsigned x = 0; x < png.width(); x++) {
     for (unsigned y = 0; y < png.height(); y++) {
       HSLAPixel & pixel = png.getPixel(x, y);
