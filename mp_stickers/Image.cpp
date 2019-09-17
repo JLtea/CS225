@@ -4,6 +4,7 @@
 #include <iostream>
 
 
+
 // Lighten an Image by increasing the luminance of every pixel by 0.1.
 // This function ensures that the luminance remains in the range [0, 1].    
 void Image::lighten(){
@@ -146,16 +147,16 @@ void Image::rotateColor (double degrees){
 }
 //Illinify the image.
 void Image::illinify(){
-    // for (unsigned int x = 0; x<this->width();x++){
-    //     for(unsigned int y = 0; y<this->height(); y++){
-    //         cs225::HSLAPixel & pixel = this->getPixel(x,y);
-    //         if (pixel.h <= 113 || pixel.h >= 294) {
-    //             pixel.h = 11;
-    //         } else {
-    //             pixel.h = 216;
-    //         }
-    //     }
-    // }
+    for (unsigned int x = 0; x<this->width();x++){
+        for(unsigned int y = 0; y<this->height(); y++){
+            cs225::HSLAPixel & pixel = this->getPixel(x,y);
+            if (pixel.h <= 113 || pixel.h >= 294) {
+                pixel.h = 11;
+            } else {
+                pixel.h = 216;
+            }
+        }
+    }
 }
 // Scale the Image by a given factor.
 

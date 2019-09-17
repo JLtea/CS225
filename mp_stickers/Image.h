@@ -8,6 +8,7 @@
 
 class Image : public cs225::PNG {
     public:
+
     void lighten();
     void lighten(double amount);
     void darken();
