@@ -20,7 +20,7 @@
 
      private:
      Image base;
-     Image* stickers;
+     Image** stickers;
      int maxStickers;
      int* coordX;
      int* coordY;
