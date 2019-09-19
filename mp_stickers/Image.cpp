@@ -4,7 +4,6 @@
 #include <iostream>
 
 
-
 // Lighten an Image by increasing the luminance of every pixel by 0.1.
 // This function ensures that the luminance remains in the range [0, 1].    
 void Image::lighten(){
@@ -192,15 +191,15 @@ void Image::scale(double factor){
 
 // This function both resizes the Image and scales the contents.
 void Image::scale(unsigned w, unsigned h){
-    if (this->width() == 0 || this->height == 0) {
+    if (this->width() == 0 || this->height() == 0) {
         this->resize(w,h);
     } else {
-        ratio1 = w/this->width();
-        ratio2 = l/this->height();
+        double ratio1 = w/this->width();
+        double ratio2 = h/this->height();
         if (ratio1>ratio2) {
             this->scale(ratio2);
         } else {
-            this->scale(ratio1)
+            this->scale(ratio1);
         }
     }
 }
