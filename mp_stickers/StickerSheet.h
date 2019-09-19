@@ -24,8 +24,6 @@
      int maxStickers;
      int* coordX;
      int* coordY;
-     int next;
-     Image nothing;
 
 
  };

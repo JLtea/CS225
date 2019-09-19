@@ -192,9 +192,15 @@ void Image::scale(double factor){
 
 // This function both resizes the Image and scales the contents.
 void Image::scale(unsigned w, unsigned h){
-    if (w<h){
-        this->scale(h/this->height());
-    } else{
-        this->scale(w/this->width());
+    if (this->width() == 0 || this->height == 0) {
+        this->resize(w,h);
+    } else {
+        ratio1 = w/this->width();
+        ratio2 = l/this->height();
+        if (ratio1>ratio2) {
+            this->scale(ratio2);
+        } else {
+            this->scale(ratio1)
+        }
     }
 }

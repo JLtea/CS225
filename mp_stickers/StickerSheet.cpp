@@ -37,6 +37,10 @@ const StickerSheet & StickerSheet::operator= (const StickerSheet & other) {
 int StickerSheet::addSticker(Image & sticker, unsigned x, unsigned y) {
     int ind = 0;
     bool added = false;
+    if(x > base.width() || y > base.height()){
+        base.scale(x + sticker.width(),y + sticker.height());
+
+    }
     if (stickers[0] == NULL) {
         *stickers[0] = sticker;
         coordX[0] = x;
@@ -64,7 +68,6 @@ int StickerSheet::addSticker(Image & sticker, unsigned x, unsigned y) {
 void StickerSheet::changeMaxStickers(unsigned max) {
     Image* changed = new Image[max];
     int upto;
-    next = 0;
     if ((int)max > maxStickers){
         upto = maxStickers;
     } else {
@@ -88,17 +91,18 @@ Image* StickerSheet::getSticker(unsigned index) {
 void StickerSheet::removeSticker(unsigned index) {
     if (0<index<maxStickers) {
         stickers[index]= NULL;
-        for (int i = index + 1; i < maxStickers; i++) {
-            stickers[index-1] = stickers[index];
-        }
     }
     
 }
 
 Image StickerSheet::render() const {
     Image* rendered = new Image;
-    *rendered = base;
-
+    rendered->resize(base.width(),base.height());
+    for(unsigned x = 0; x < base.width(); x++){
+        for(unsigned y = 0; y < base.height(); y++){
+            rendered->getPixel(x,y) = base.getPixel(x,y);
+        }
+    }
     for(int h = 0; h < maxStickers; h++) {
         Image current = *stickers[h];
         for(unsigned i = 0; i < stickers[h]->width(); i++){
@@ -111,10 +115,11 @@ Image StickerSheet::render() const {
 }
 
 bool StickerSheet::translate(unsigned index, unsigned x, unsigned y) {
-    if ((int)index > next) {
+    if(0<index<maxStickers){
+        coordX[index] = x;
+        coordY[index] = y;
+        return true;
+    } else {
         return false;
     }
-    coordX[index] = x;
-    coordY[index] = y;
-    return true;
 }
