@@ -143,8 +143,8 @@ void StickerSheet::removeSticker(unsigned index) {
 
 Image StickerSheet::render() const {
     Image rendered = base;
-    int maxX = 0;
-    int maxY = 0;
+    int maxX = rendered.width();
+    int maxY = rendered.height();
     for(int i = 0; i < count; i++){
         int w = stickers[i]->width() + coordX[i];
         int h = stickers[i]->height() + coordY[i];
@@ -155,13 +155,7 @@ Image StickerSheet::render() const {
             maxY = h;
         }
     }
-    if (maxX != 0 || maxY != 0){
-        if (maxX>maxY){
-            rendered.scale(maxX/rendered.width());
-        } else {
-            rendered.scale(maxY/rendered.height());
-        }
-    }
+    rendered.resize(maxX, maxY);
 
     
     for(int h = 0; h < count; h++) {
