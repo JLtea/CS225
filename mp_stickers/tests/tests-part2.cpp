@@ -38,7 +38,6 @@ TEST_CASE("StickerSheet::changeMaxStickers() does not discard stickers when resi
   sheet.addSticker(i, 20, 200);
 
   sheet.changeMaxStickers(7);
-
   Image expected;
   expected.readFromFile("tests/expected.png");
 
@@ -87,6 +86,8 @@ TEST_CASE("StickerSheet::changeMaxStickers() discards stickers beyond the end of
   sheet.addSticker(i, 60, 200);
   sheet.changeMaxStickers(1);
 
+  
+
   REQUIRE( sheet.render() == expected );
 }
 
@@ -133,6 +134,7 @@ TEST_CASE("StickerSheet::removeSticker() can remove all stickers", "[weight=1][p
   sheet.removeSticker(2);
   sheet.removeSticker(1);
   sheet.removeSticker(0);
+  
 
   REQUIRE( sheet.render() == alma );
 }
@@ -188,7 +190,6 @@ TEST_CASE("StickerSheet::translate() translates a sticker's location", "[weight=
   StickerSheet sheet(alma, 5);
   sheet.addSticker(i, 0, 0);
   sheet.translate(0, 20, 200);
-
   REQUIRE( sheet.render() == expected );
 }
 
@@ -222,7 +223,6 @@ TEST_CASE("A complex StickerSheet is correct", "[weight=5][part=2][timeout=30000
   sheet.addSticker(i, 140, 200);
   sheet.removeSticker(3);
   sheet.translate(0, 0, 0);
-
   REQUIRE( sheet.render() == expected );
 }
 
