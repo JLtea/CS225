@@ -97,7 +97,8 @@ void StickerSheet::changeMaxStickers(unsigned max) {
             changed[i] = *stickers[i];
         }
     } else {
-        for (int i = 0; i < count; i++) {
+        int realCount = count;
+        for (int i = 0; i < realCount; i++) {
             if (i < (int)max) {
                 changed[i] = *stickers[i];
             } else {
