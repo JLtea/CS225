@@ -29,9 +29,15 @@ namespace QuackFun {
 template <typename T>
 T sum(stack<T>& s)
 {
-
+    if (s.empty()){
+        return 0;
+    }
+    T hold = s.top();
+    s.pop();
+    T total = hold + sum(s);
+    s.push(hold);
     // Your code here
-    return T(); // stub return value (0 for primitive types). Change this!
+    return total; // stub return value (0 for primitive types). Change this!
                 // Note: T() is the default value for objects, and 0 for
                 // primitive types
 }
@@ -55,8 +61,30 @@ T sum(stack<T>& s)
  */
 bool isBalanced(queue<char> input)
 {
-
     // @TODO: Make less optimistic
+    int open = 0;
+    int close = 0;
+    stack<char> save;
+    while (!input.empty()){
+        if (input.front() =='['){
+            open++;
+        }
+        if (input.front() ==']'){
+            close++;
+        }
+        if (close > open){
+            return false;
+        }
+        save.push(input.front());
+        input.pop();
+    }
+    while (!save.empty()){
+        input.push(save.top());
+        save.pop();
+    } 
+    if (open != close){
+        return false;
+    }
     return true;
 }
 
@@ -79,9 +107,37 @@ template <typename T>
 void scramble(queue<T>& q)
 {
     stack<T> s;
+    queue<T> q2;
     // optional: queue<T> q2;
-
+    int n = 1;
     // Your code here
+    while (!q.empty()){
+        for (int i = 0; i < n; i++){
+            if (!q.empty()){
+                q2.push(q.front());
+                q.pop();
+            }
+        }
+        n++;
+        for (int i = 0; i < n; i++){
+            if (!q.empty()){
+                s.push(q.front());
+                q.pop();
+            }
+        }
+        while(!s.empty()){
+            q2.push(s.top());
+            s.pop();
+        }
+        n++;
+    }
+
+    while(!q2.empty()){
+        q.push(q2.front());
+        q2.pop();
+    }
+
+    
 }
 
 /**
@@ -108,14 +164,21 @@ void scramble(queue<T>& q)
  */
 template <typename T>
 bool verifySame(stack<T>& s, queue<T>& q)
-{
-    bool retval = true; // optional
+{  
+    if (s.empty() && q.empty()) {
+        return true;
+    }
+    if (s.top() != q.back()){
+        return false;
+    }
+    //bool retval = true; // optional
     // T temp1; // rename me
     // T temp2; // rename :)
 
     // Your code here
-
-    return retval;
+    s.pop();
+    q.pop();
+    return verifySame(s,q);
 }
 
 }

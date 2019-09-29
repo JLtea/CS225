@@ -22,8 +22,14 @@
  */
 int RecursionExercises::sumDigits(int n)
 {
+    if (n < 10){
+        return n;
+    }
+    // if (n < 100){
+    //     return n % 10 + n/10;
+    // }
 
-    return -1;
+    return sumDigits(n/10) + n%10;
 }
 
 /**
@@ -44,7 +50,8 @@ int RecursionExercises::sumDigits(int n)
  * @return     The total number of blocks in the triangle pyramid
  */
 int RecursionExercises::triangle(int rows)
-{
-
-    return -1;
+{   
+    if (rows >= 1)
+    return triangle(rows - 1) + rows;
+    return 0;
 }
