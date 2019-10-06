@@ -29,6 +29,7 @@ class AbstractSyntaxTree
          */
         double eval() const;
     private:
+        double eval(Node* subRoot) const;
         // You may add any helper functions you like.....
 };
 

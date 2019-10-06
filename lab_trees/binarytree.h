@@ -193,7 +193,10 @@ class BinaryTree
         void printLeftToRight(const Node* subRoot) const;
 
 
-
+        bool isOrderedIterative(Node* subRoot) const;
+        
+        
+        void getPaths(std::vector<std::vector<T>>& paths,std::vector<T>& path, Node*subRoot) const;
 
         /**
          * Private helper function for the sorted public insert function.
@@ -221,6 +224,17 @@ class BinaryTree
          * @param subRoot The current node in the recursion
          */
         void clear(Node* subRoot);
+        /**
+         * Private helper function for mirror.
+         * @param subRoot The current node in the recursion
+         */
+        void mirror(Node* subRoot);
+
+        /**
+         * Private helper function for isOrderedRecursive.
+         * @param subRoot The current node in the recursion
+         */
+        bool isOrderedRecursive(Node* subRoot) const;
 
         /**
          * Private helper function for the public inOrder function.
@@ -228,6 +242,9 @@ class BinaryTree
          * @param treeVector stores nodes in order
          */
         void inOrder(Node *subRoot, std::vector<T>& treeVector);
+
+        int findLargest(Node* subRoot) const;
+        int findsmallest(Node* subRoot) const;
 };
 
 #include "binarytree_given.cpp"

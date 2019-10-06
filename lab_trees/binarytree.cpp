@@ -5,6 +5,7 @@
  */
 #include "TreeTraversals/InorderTraversal.h"
 #include <iostream>
+#include <stack>
 
 /**
  * @return The height of the binary tree. Recall that the height of a binary
@@ -79,6 +80,24 @@ void BinaryTree<T>::printLeftToRight(const Node* subRoot) const
 void BinaryTree<T>::mirror()
 {
     //your code here
+    mirror(root);
+}
+
+/**
+ * Private helper function for mirror.
+ * @param subRoot The current node in the recursion
+ */
+template <typename T>
+void BinaryTree<T>::mirror(Node* subRoot){
+    if (subRoot == NULL){
+        return;
+    }
+
+    Node* temp = subRoot->right;
+    subRoot->right = subRoot->left;
+    subRoot->left = temp;
+    mirror(subRoot->left);
+    mirror(subRoot->right);
 }
 
 
@@ -92,7 +111,25 @@ template <typename T>
 bool BinaryTree<T>::isOrderedIterative() const
 {
     // your code here
-    return false;
+    
+    return isOrderedIterative(root);
+}
+
+template <typename T>
+bool BinaryTree<T>::isOrderedIterative(Node* subRoot) const
+{
+    // your code here
+    InorderTraversal<T> traversal(subRoot);
+    Node* current = NULL;
+    for (typename TreeTraversal<T>::Iterator it = traversal.begin(); it != traversal.end(); ++it){
+        if (current != NULL){
+            if (current->elem > (*it)->elem){
+                return false;
+            }
+        }
+        current = (*it);
+    }
+    return true;
 }
 
 /**
@@ -104,10 +141,57 @@ bool BinaryTree<T>::isOrderedIterative() const
 template <typename T>
 bool BinaryTree<T>::isOrderedRecursive() const
 {
+    return isOrderedRecursive(root);
     // your code here
-    return false;
+    
 }
 
+template <typename T>
+bool BinaryTree<T>::isOrderedRecursive(Node* subRoot) const
+{
+    // your code here
+    if (subRoot->left == NULL && subRoot->right == NULL){
+        return true;
+    }
+    bool isOrdered = true;
+    if (subRoot->left != NULL){
+        if (!isOrderedRecursive(subRoot->left)) {
+            isOrdered = false; 
+        }
+    }
+    if (subRoot->right != NULL){
+        if (!isOrderedRecursive(subRoot->right)) {
+            isOrdered = false; 
+        }
+    }
+    if (isOrdered){
+        if (subRoot->left != NULL && subRoot->elem < findLargest(subRoot->left)){
+            isOrdered = false;
+        }
+        if (subRoot->right != NULL && subRoot->elem > findsmallest(subRoot->right)){
+            isOrdered = false;
+        }
+        
+    }
+    return isOrdered;
+
+}
+
+template <typename T>
+int BinaryTree<T>::findLargest(Node* subRoot) const{
+    if (subRoot->right != NULL){
+        return findLargest(subRoot->right);
+    }
+    return subRoot->elem;
+}
+
+template <typename T>
+int BinaryTree<T>::findsmallest(Node* subRoot) const{
+    if (subRoot->left != NULL){
+        return findsmallest(subRoot->left);
+    }
+    return subRoot->elem;
+}
 
 /**
  * creates vectors of all the possible paths from the root of the tree to any leaf
@@ -120,7 +204,38 @@ bool BinaryTree<T>::isOrderedRecursive() const
 template <typename T>
 void BinaryTree<T>::getPaths(std::vector<std::vector<T>>& paths) const
 {
+    if (root != NULL){
+        std::vector<T> path;
+        getPaths(paths,path,root);
+    }
+}
+
+template <typename T>
+void BinaryTree<T>::getPaths(std::vector<std::vector<T>>& paths,std::vector<T>& path, Node*subRoot) const
+{
     // your code here
+    if (subRoot == NULL){
+        return;
+    } else {
+        path.push_back(subRoot->elem);
+    }
+    if (subRoot->left == NULL && subRoot->right == NULL){
+        paths.push_back(path);
+    }
+    if (subRoot->left != NULL && subRoot->right != NULL){
+        std::vector<T> newPath;
+        newPath = path;
+        getPaths(paths, path, subRoot->left);
+        getPaths(paths, newPath, subRoot->right);
+    } else {
+        if (subRoot->left != NULL){
+            getPaths(paths,path,subRoot->left);
+        }
+        if (subRoot->right != NULL){
+            getPaths(paths,path,subRoot->right);
+        }
+    }
+    
 }
 
 
