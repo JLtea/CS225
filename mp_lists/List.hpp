@@ -27,7 +27,7 @@ typename List<T>::ListIterator List<T>::begin() const {
 template <typename T>
 typename List<T>::ListIterator List<T>::end() const {
   // @TODO: graded in MP3.1
-  return List<T>::ListIterator(tail_);
+  return List<T>::ListIterator(tail_->next);
 }
 
 
@@ -38,14 +38,14 @@ typename List<T>::ListIterator List<T>::end() const {
 template <typename T>
 void List<T>::_destroy() {
   /// @todo Graded in MP3.1
-  ListNode* current = head_;
-  for (int i = 1; i <length_; i++){
-    if (current->prev != NULL){
-      delete current->prev;
-    }
-    current = current->next;
-  }
-  delete tail_;
+  // ListNode* current = head_;
+  // for (int i = 1; i <length_; i++){
+  //   if (current->prev != NULL){
+  //     delete current->prev;
+  //   }
+  //   current = current->next;
+  // }
+  // delete tail_;
 }
 
 /**
@@ -61,16 +61,15 @@ void List<T>::insertFront(T const & ndata) {
   if (head_ == NULL){
     head_ = newNode;
     tail_ = newNode;
-    head_->next = tail_;
-    tail_->prev = head_;
+    head_->next = NULL;
+    head_->prev = NULL;
   } else {
+    newNode->prev = NULL; 
     newNode->next = head_;
+    head_->prev = newNode; 
     head_ = newNode;
-    head_->next->prev = head_;
   }
-
   length_++;
-
 }
 
 /**
@@ -86,12 +85,13 @@ void List<T>::insertBack(const T & ndata) {
   if (head_ == NULL){
     head_ = newNode;
     tail_ = newNode;
-    head_->next = newNode;
-    tail_->prev = newNode;
+    head_->next = NULL;
+    head_->prev = NULL;
   } else {
+    newNode->next = NULL;
     newNode->prev = tail_;
+    tail_->next = newNode;
     tail_ = newNode;  
-    tail_->prev->next = tail_;
   }
   length_++;
 }
@@ -145,7 +145,8 @@ template <typename T>
 void List<T>::waterfall() {
   /// @todo Graded in MP3.1
   ListNode* curr = head_;
-  for (int i = 1; i <= length_; i++){
+  for (int i = 1; curr->next != NULL; i++){
+    ListNode*hold = curr->next;
     if (i%2 == 0){
       curr->prev->next = curr->next;
       curr->next->prev = curr->prev;
@@ -154,7 +155,7 @@ void List<T>::waterfall() {
       curr->next = NULL;
       tail_ = curr;
     }
-    curr = curr->next;
+    curr = hold;
   }
 }
 
