@@ -245,6 +245,7 @@ class BinaryTree
 
         int findLargest(Node* subRoot) const;
         int findsmallest(Node* subRoot) const;
+        int sumDistances(Node* subRoot, int depth) const;
 };
 
 #include "binarytree_given.cpp"
