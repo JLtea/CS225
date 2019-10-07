@@ -6,9 +6,9 @@
 template <class T>
 List<T>::List() { 
   // @TODO: graded in MP3.1
-    head_ = NULL;
-    tail_ = NULL;
-    length_ = 0;
+  head_ = NULL;
+  tail_ = NULL;
+  length_ = 0;
 }
 
 /**
@@ -30,7 +30,6 @@ typename List<T>::ListIterator List<T>::end() const {
   return List<T>::ListIterator(tail_->next);
 }
 
-
 /**
  * Destroys all dynamically allocated memory associated with the current
  * List class.
@@ -38,14 +37,13 @@ typename List<T>::ListIterator List<T>::end() const {
 template <typename T>
 void List<T>::_destroy() {
   /// @todo Graded in MP3.1
-  // ListNode* current = head_;
-  // for (int i = 1; i <length_; i++){
-  //   if (current->prev != NULL){
-  //     delete current->prev;
-  //   }
-  //   current = current->next;
-  // }
-  // delete tail_;
+  ListNode* current = head_;
+  while (current != NULL){
+    ListNode* hold = current->next;
+    delete current;
+    current = hold;
+  }
+
 }
 
 /**
@@ -58,7 +56,7 @@ template <typename T>
 void List<T>::insertFront(T const & ndata) {
   /// @todo Graded in MP3.1
   ListNode * newNode = new ListNode(ndata);
-  if (head_ == NULL){
+  if (head_ == NULL) {
     head_ = newNode;
     tail_ = newNode;
     head_->next = NULL;
@@ -82,7 +80,7 @@ template <typename T>
 void List<T>::insertBack(const T & ndata) {
   /// @todo Graded in MP3.1
   ListNode * newNode = new ListNode(ndata);
-  if (head_ == NULL){
+  if (head_ == NULL) {
     head_ = newNode;
     tail_ = newNode;
     head_->next = NULL;
@@ -115,10 +113,9 @@ void List<T>::insertBack(const T & ndata) {
 template <typename T>
 typename List<T>::ListNode * List<T>::split(ListNode * start, int splitPoint) {
   /// @todo Graded in MP3.1
-  ListNode * curr = start;
-
+  ListNode* curr = start;
   for (int i = 0; i < splitPoint; i++) {
-    if (curr == NULL){
+    if (curr == NULL) {
       break;
     }
     curr = curr->next;
@@ -145,8 +142,8 @@ template <typename T>
 void List<T>::waterfall() {
   /// @todo Graded in MP3.1
   ListNode* curr = head_;
-  for (int i = 1; curr->next != NULL; i++){
-    ListNode*hold = curr->next;
+  for (int i = 1; curr->next != NULL; i++) {
+    ListNode* hold = curr->next;
     if (i%2 == 0){
       curr->prev->next = curr->next;
       curr->next->prev = curr->prev;
@@ -180,8 +177,89 @@ void List<T>::reverse() {
  */
 template <typename T>
 void List<T>::reverse(ListNode *& startPoint, ListNode *& endPoint) {
-  /// @todo Graded in MP3.2
+  // @todo Graded in MP3.2
+  if (startPoint == endPoint) {
+    return;
+  }
+
+  ListNode* startPrev = startPoint->prev;
+  ListNode* endNext = endPoint->next;
+  ListNode* curr = startPoint;
+
+  while (curr != endNext) {
+    ListNode* next = curr->next;
+    curr->next = curr->prev; 
+    curr->prev = next; 
+    curr = curr->prev; 
+  }
+
+  if (startPrev != NULL) {
+    startPrev->next = endPoint;
+    endPoint->prev = startPrev;
+  }
+
+  if (endNext != NULL) {
+    endNext->prev = startPoint;
+    startPoint->next = endNext;
+  }
+
+  ListNode* temp = startPoint;
+  startPoint = endPoint;
+  endPoint = temp; 
 }
+
+
+
+  // if (!startPoint || !endPoint) {
+  //   return;
+  // }
+  // Base case 1 node reverse
+//   if (startPoint == endPoint){
+//     return;
+//   }
+
+//   // Base case 2 node reverse
+//   else if (startPoint->next == endPoint) {
+//     ListNode* startPrev = startPoint->prev;
+//     ListNode* endNext = endPoint->next; 
+//     endPoint->prev = startPrev;
+//     if (startPrev != NULL) {
+//       startPrev->next = endPoint;
+//     }
+//     startPoint->next = endNext; 
+//     if (endNext != NULL) {
+//       endNext->prev = startPoint; 
+//     }
+//     endPoint->next = startPoint;
+//     startPoint->prev = endPoint; 
+//   }
+
+//   // Recursive case > 2 nodes
+//   else {
+//     ListNode* startPrev = startPoint->prev;
+//     ListNode* startNext = startPoint->next;
+//     ListNode* endPrev = endPoint->prev;
+//     ListNode* endNext = endPoint->next;
+//     endPoint->prev = startPrev;
+//     if (startPrev != NULL) {
+//       startPrev->next = endPoint;
+//     }
+//     endPoint->next = startNext;
+//     startNext->prev = endPoint; 
+
+//     startPoint->prev = endPrev;
+//     endPrev->next = startPoint;
+//     startPoint->next = endNext;
+//     if (endNext != NULL) {
+//       endNext->prev = startPoint; 
+//     }
+
+//     reverse(startNext, endPrev);
+//   }
+//   ListNode* temp = startPoint;
+//   startPoint = endPoint;
+//   endPoint = temp; 
+// }
 
 /**
  * Reverses blocks of size n in the current List. You should use your
