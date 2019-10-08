@@ -1,6 +1,12 @@
 {
     "files.associations": {
         "random": "cpp",
-        "iterator": "cpp"
+        "iterator": "cpp",
+        "array": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "vector": "cpp",
+        "algorithm": "cpp",
+        "iosfwd": "cpp"
     }
 }

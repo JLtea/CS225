@@ -43,7 +43,7 @@ void List<T>::_destroy() {
     delete current;
     current = hold;
   }
-
+  length_ = 0;
 }
 
 /**
@@ -270,6 +270,18 @@ void List<T>::reverse(ListNode *& startPoint, ListNode *& endPoint) {
 template <typename T>
 void List<T>::reverseNth(int n) {
   /// @todo Graded in MP3.2
+  // ListNode* from = head_;
+  // ListNode* to = from;
+  // while(to != NULL){
+  //   for (int i = 1; i < n; i++){
+  //     if (to->next != NULL){
+  //       to = to->next;
+  //     }
+  //   }
+  //   reverse(from, to);
+  //   to = to->next;
+  //   from = to;
+  // }
 }
 
 
@@ -311,7 +323,83 @@ void List<T>::mergeWith(List<T> & otherList) {
 template <typename T>
 typename List<T>::ListNode * List<T>::merge(ListNode * first, ListNode* second) {
   /// @todo Graded in MP3.2
-  return NULL;
+  if (first == NULL) {
+    return second;
+  }
+  if (second == NULL) {
+    return first;
+  }
+
+  ListNode* head;
+  ListNode* list1 = first;
+  ListNode* list2 = second;
+  ListNode* current;
+  
+  if (list1->data < list2->data) {
+    head = list1;
+    list1 = list1->next;
+  } else {
+    head = list2;
+    list2 = list2->next;
+  }
+  current = head;
+  while(true) {
+    if (list1 == NULL){
+      current->next = list2;
+      list2->prev = current;
+      break;
+    }
+    if (list2 == NULL){
+      current->next = list1;
+      list1->prev = current;
+      break;
+    }
+    if (list1->data < list2->data) {
+      current->next = list1;
+      list1->prev = current;
+      list1 = list1->next;
+    } else {
+      current->next = list2;
+      list2->prev = current;
+      list2 = list2->next;
+    }
+    current = current->next;
+  }
+  return head;
+
+  // ListNode* head = first;
+  // ListNode* merged = first;
+  // ListNode* current = second;
+  // ListNode* endofMerge = NULL;
+  // while (current != NULL){
+  //   ListNode* holdnext = current->next;
+  //   while (merged != NULL){
+  //     if (merged->next == NULL){
+  //       endofMerge = merged;
+  //     }
+  //     if (merged->data < current->data){
+  //       merged = merged->next;
+  //     } else {
+  //       current->next = merged;
+  //       current->prev = merged->prev;
+  //       merged->prev = current;
+  //       if (current->prev != NULL){
+  //         current->prev->next = current;
+  //       } else {
+  //         head = current;
+  //       }
+  //       break;
+  //     }
+      
+  //   }
+  //   if (current != NULL && merged == NULL){
+  //     endofMerge->next = current;
+  //     current->prev = endofMerge;
+  //     break;
+  //   }
+  //   current = holdnext;
+  // }
+  // return head;
 }
 
 /**
@@ -328,5 +416,24 @@ typename List<T>::ListNode * List<T>::merge(ListNode * first, ListNode* second) 
 template <typename T>
 typename List<T>::ListNode* List<T>::mergesort(ListNode * start, int chainLength) {
   /// @todo Graded in MP3.2
-  return NULL;
+  if (start == NULL){
+    return NULL;
+  } 
+  if (chainLength == 1){
+    return start;
+  }
+  ListNode* start2 = split(start,chainLength/2);
+  ListNode* x = mergesort(start, chainLength/2);
+  ListNode* y = mergesort(start2, chainLength - chainLength/2);
+  // if (chainLength % 2 == 0){
+  //   //start2 = split(start,chainLength/2);
+  //   mergesort(start, chainLength/2);
+  //   mergesort(start2, chainLength/2);
+  // } else {
+  //   //start2 = split(start,chainLength/2);
+  //   mergesort(start, chainLength/2);
+  //   mergesort(start2, chainLength/2 + 1);
+  // }
+
+  return merge(x,y);
 }

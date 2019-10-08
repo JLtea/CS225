@@ -166,3 +166,87 @@ TEST_CASE("List::sort #2", "[weight=5][part=2]") {
 
   REQUIRE( b3 == expected );
 }
+TEST_CASE("custom merge", "[weight=10][part=2]") {
+  List<unsigned> firstList;
+  firstList.insertBack(1);
+  firstList.insertBack(5);
+  firstList.insertBack(6);
+  firstList.insertBack(8);
+
+
+
+  List<unsigned> secondList;
+  secondList.insertBack(2);
+  secondList.insertBack(3);
+  secondList.insertBack(4);
+  secondList.insertBack(7);
+  secondList.insertBack(9);
+
+
+
+  cout << firstList << endl;
+  cout << secondList << endl;
+  firstList.mergeWith(secondList);
+  cout << firstList << endl;
+  cout << secondList << endl;
+}
+
+TEST_CASE("custom sort", "[weight=10][part=2]") {
+  List<unsigned> firstList;
+  firstList.insertBack(6);
+  firstList.insertBack(1);
+  firstList.insertBack(5);
+  firstList.insertBack(8);
+  firstList.insertBack(4);
+  firstList.insertBack(3);
+  firstList.insertBack(7);
+  firstList.insertBack(2);
+  firstList.insertBack(9);
+
+  cout << firstList << endl;
+  firstList.sort();
+  cout << firstList << endl;
+}
+
+TEST_CASE("f this", "[weight=2][part=2][valgrind]") {
+    List<int> list;
+    List<int> list2;
+    List<int> list3;
+    list.insertBack(2);
+    list.insertBack(5);
+    list.insertBack(2);
+
+    stringstream s;
+    list.print(s);
+
+    cout<<"initial list" <<s.str()<<endl;
+    s.str("");
+    list2 = list.split(1);
+    s.str("");
+    list.print(s);
+    cout<<"1st split list1"<< s.str()<<endl;
+    s.str("");
+    list2.print(s);
+    cout<<"1st split list2"<< s.str()<<endl;
+
+    list3 = list2.split(1);
+    s.str("");
+    list2.print(s);
+    cout<<"2nd split list2"<< s.str()<<endl;
+    s.str("");
+    list3.print(s);
+    cout<<"2nd split list3"<< s.str()<<endl;
+
+    list2.mergeWith(list3);
+    s.str("");
+    list2.print(s);
+    cout<<"1st merge"<< s.str()<<endl;
+
+    list.mergeWith(list2);
+    s.str("");
+    list.print(s);
+    cout<<"2nd merge (result)"<< s.str()<<endl;
+
+    
+
+}
