@@ -114,6 +114,12 @@ template <typename T>
 typename List<T>::ListNode * List<T>::split(ListNode * start, int splitPoint) {
   /// @todo Graded in MP3.1
   ListNode* curr = start;
+  if (start == NULL){
+    return NULL;
+  }
+  if (splitPoint == 0){
+    return start;
+  }
   for (int i = 0; i < splitPoint; i++) {
     if (curr == NULL) {
       break;
@@ -124,6 +130,8 @@ typename List<T>::ListNode * List<T>::split(ListNode * start, int splitPoint) {
   if (curr != NULL) {
       curr->prev->next = NULL;
       curr->prev = NULL;
+  } else {
+    return start;
   }
 
   return curr;
@@ -182,35 +190,127 @@ void List<T>::reverse(ListNode *& startPoint, ListNode *& endPoint) {
     return;
   }
 
+  ListNode* oldhead = head_;
+  ListNode* oldtail = tail_;
+
+  ListNode* startAdd = startPoint;
+  ListNode* endAdd = endPoint;
   ListNode* startPrev = startPoint->prev;
   ListNode* endNext = endPoint->next;
-  ListNode* curr = startPoint;
 
-  while (curr != endNext) {
+  ListNode* curr = endPoint;
+  int counter = 1;
+  while (true) {
+    if (curr == NULL) {
+      break;
+    }
+    //cout << "start point: " << startPoint->data << endl;
+    if (curr == startAdd) {
+      //cout << "counter: " << counter << endl;
+      curr->next = endNext;
+      if (endNext != NULL) {
+        endNext->prev = curr;
+      }
+      if (endAdd == oldtail) {
+        //cout << "assigned head at " << curr->data << endl;
+        tail_ = curr;
+        // head_ = endAdd;
+      }
+      //cout << "HIT" << endl;
+      break;
+    }
     ListNode* next = curr->next;
-    curr->next = curr->prev; 
-    curr->prev = next; 
-    curr = curr->prev; 
+    curr->next = curr->prev;
+    if (curr == endAdd) {
+      //cout << "counter: " << counter << endl;
+      curr->prev = startPrev;
+      if (startPrev != NULL) {
+        startPrev->next = curr;
+      }
+      if (startAdd == oldhead) {
+        //cout << "assigned tail at " << curr->data << endl;
+        head_ = curr;
+
+      }
+      //cout << curr->prev->data << curr->data << curr->next->data << endl;
+    } else {
+      curr->prev = next;
+    }
+
+    if (curr != NULL) {
+      //cout << "counter: " << counter << ", data: " << curr->data << endl;
+      curr = curr->next;
+
+    } else {
+      break;
+    }
+    counter++;
   }
 
-  if (startPrev != NULL) {
-    startPrev->next = endPoint;
-    endPoint->prev = startPrev;
-  }
-
-  if (endNext != NULL) {
-    endNext->prev = startPoint;
-    startPoint->next = endNext;
-  }
-
-  ListNode* temp = startPoint;
-  startPoint = endPoint;
-  endPoint = temp; 
 }
 
+  
 
 
-  // if (!startPoint || !endPoint) {
+  // ListNode* curr = startPoint;
+
+  // while (curr != endNext) {
+  //   ListNode* next = curr->next;
+  //   curr->next = curr->prev; 
+  //   curr->prev = next; 
+  //   curr = curr->prev; 
+  // }
+
+  // endPoint->prev = startPrev;
+  // if (startPrev != NULL) {
+  //   startPrev->next = endPoint;
+  // }
+
+  // startPoint->next = endNext;
+  // if (endNext != NULL) {
+  //   endNext->prev = startPoint;
+  // }
+
+  // ListNode* temp = startPoint;
+  // startPoint = endPoint;
+  // endPoint = temp; 
+
+  // ListNode* curr = endPoint;
+  // if (startPrev != NULL) {
+  //   startPrev->next = endPoint;
+  // }
+
+/**
+ * Reverses blocks of size n in the current List. You should use your
+ * reverse( ListNode * &, ListNode * & ) helper function in this method!
+ *
+ * @param n The size of the blocks in the List to be reversed.
+ */
+template <typename T>
+void List<T>::reverseNth(int n) {
+  /// @todo Graded in MP3.2
+  if (n>=length_) {
+    reverse(head_, tail_);
+  } else {
+  ListNode* from = head_;
+  ListNode* to = from;
+  //bool first = true;
+  while(from != NULL) {
+    for (int i = 1; i < n; i++) {
+      if (to->next != NULL){
+        to = to->next;
+      }
+    }
+    ListNode* nextNode = to->next;
+    reverse(from, to);
+    from = nextNode;
+    to = from; 
+  }
+  
+  }
+}
+
+// if (!startPoint || !endPoint) {
   //   return;
   // }
   // Base case 1 node reverse
@@ -260,30 +360,6 @@ void List<T>::reverse(ListNode *& startPoint, ListNode *& endPoint) {
 //   startPoint = endPoint;
 //   endPoint = temp; 
 // }
-
-/**
- * Reverses blocks of size n in the current List. You should use your
- * reverse( ListNode * &, ListNode * & ) helper function in this method!
- *
- * @param n The size of the blocks in the List to be reversed.
- */
-template <typename T>
-void List<T>::reverseNth(int n) {
-  /// @todo Graded in MP3.2
-  // ListNode* from = head_;
-  // ListNode* to = from;
-  // while(to != NULL){
-  //   for (int i = 1; i < n; i++){
-  //     if (to->next != NULL){
-  //       to = to->next;
-  //     }
-  //   }
-  //   reverse(from, to);
-  //   to = to->next;
-  //   from = to;
-  // }
-}
-
 
 /**
  * Merges the given sorted list into the current sorted list.
