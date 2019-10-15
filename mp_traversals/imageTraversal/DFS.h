@@ -31,8 +31,9 @@ public:
   Point pop();
   Point peek() const;
   bool empty() const;
-
+  
 private:
 	/** @todo [Part 1] */
 	/** add private members here*/
+  std::stack<Point> visit;
 };

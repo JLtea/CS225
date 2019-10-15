@@ -1,6 +1,7 @@
 #include <cmath>
 #include <iterator>
 #include <iostream>
+#include <map>
 
 #include "../cs225/HSLAPixel.h"
 #include "../cs225/PNG.h"
@@ -33,6 +34,13 @@ double ImageTraversal::calculateDelta(const HSLAPixel & p1, const HSLAPixel & p2
  */
 ImageTraversal::Iterator::Iterator() {
   /** @todo [Part 1] */
+  
+}
+
+ImageTraversal::Iterator::Iterator(ImageTraversal* traversal, Point &current) {
+  /** @todo [Part 1] */
+  this->current = current;
+  this->traversal = traversal;
 }
 
 /**
@@ -42,6 +50,51 @@ ImageTraversal::Iterator::Iterator() {
  */
 ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
   /** @todo [Part 1] */
+    HSLAPixel & start = traversal->image.getPixel(traversal->start.x,traversal->start.y);
+    //right side
+    if (current.x+1 < traversal->image.width()){
+      HSLAPixel & visit = traversal->image.getPixel(current.x+1,current.y);
+      if (calculateDelta(start,visit)<traversal->tolerance) {
+        Point toAdd = Point(current.x+1,current.y);
+          if (visited.find(toAdd)==visited.end()) {
+            traversal->add(toAdd);
+          }
+      } 
+    }
+    //below
+    if (current.y+1 < traversal->image.height()){
+      HSLAPixel & visit = traversal->image.getPixel(current.x,current.y+1);
+      if (calculateDelta(start,visit)<traversal->tolerance) {
+        Point toAdd = Point(current.x,current.y+1);
+          if (visited.find(toAdd)==visited.end()) {
+            traversal->add(toAdd);
+          }
+      } 
+    }
+    //left side
+    if (current.x-1 >= 0){
+      HSLAPixel & visit = traversal->image.getPixel(current.x-1,current.y);
+      if (calculateDelta(start,visit)<traversal->tolerance) {
+        Point toAdd = Point(current.x-1,current.y);
+          if (visited.find(toAdd)==visited.end()) {
+            traversal->add(toAdd);
+          }
+      } 
+    }
+    //above
+    if (current.y-1 >= 0) {
+      HSLAPixel & visit = traversal->image.getPixel(current.x,current.y-1);
+      if (calculateDelta(start,visit)<traversal->tolerance) {
+        Point toAdd = Point(current.x,current.y-1);
+          if (visited.find(toAdd)==visited.end()) {
+            traversal->add(toAdd);
+          }
+      } 
+    }
+    if (!traversal->empty()){
+      current = traversal->pop();
+      visited.insert(std::pair<Point,bool>(current,true));
+    }
   return *this;
 }
 
@@ -52,7 +105,7 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
  */
 Point ImageTraversal::Iterator::operator*() {
   /** @todo [Part 1] */
-  return Point(0, 0);
+  return current;
 }
 
 /**
