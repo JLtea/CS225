@@ -43,7 +43,8 @@ ImageTraversal::Iterator DFS::begin() {
  */
 ImageTraversal::Iterator DFS::end() {
   /** @todo [Part 1] */
-  return ImageTraversal::Iterator();
+  Point empty(-1,-1);
+  return ImageTraversal::Iterator(this,empty);
 }
 
 /**

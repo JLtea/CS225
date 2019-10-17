@@ -34,13 +34,22 @@ double ImageTraversal::calculateDelta(const HSLAPixel & p1, const HSLAPixel & p2
  */
 ImageTraversal::Iterator::Iterator() {
   /** @todo [Part 1] */
-  
+  traversal = NULL;
 }
 
 ImageTraversal::Iterator::Iterator(ImageTraversal* traversal, Point &current) {
   /** @todo [Part 1] */
   this->current = current;
   this->traversal = traversal;
+  track.push_back(current);
+}
+bool ImageTraversal::Iterator::visited(Point visit){
+  for (int i = 0; i < (int)track.size(); i++) {
+    if (track.at(i) == visit) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -56,44 +65,62 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
       HSLAPixel & visit = traversal->image.getPixel(current.x+1,current.y);
       if (calculateDelta(start,visit)<traversal->tolerance) {
         Point toAdd = Point(current.x+1,current.y);
-          if (visited.find(toAdd)==visited.end()) {
+          if (!visited(toAdd)) {
             traversal->add(toAdd);
-          }
-      } 
-    }
+          } 
+      }  
+    } 
+
     //below
     if (current.y+1 < traversal->image.height()){
       HSLAPixel & visit = traversal->image.getPixel(current.x,current.y+1);
       if (calculateDelta(start,visit)<traversal->tolerance) {
         Point toAdd = Point(current.x,current.y+1);
-          if (visited.find(toAdd)==visited.end()) {
+          if (!visited(toAdd)) {
             traversal->add(toAdd);
-          }
+          } 
       } 
     }
+
     //left side
-    if (current.x-1 >= 0){
+    if ((int)current.x-1 >= 0){
       HSLAPixel & visit = traversal->image.getPixel(current.x-1,current.y);
       if (calculateDelta(start,visit)<traversal->tolerance) {
         Point toAdd = Point(current.x-1,current.y);
-          if (visited.find(toAdd)==visited.end()) {
+          if (!visited(toAdd)) {
             traversal->add(toAdd);
-          }
+          } 
       } 
     }
+
     //above
-    if (current.y-1 >= 0) {
+    if ((int)current.y-1 >= 0) {
       HSLAPixel & visit = traversal->image.getPixel(current.x,current.y-1);
       if (calculateDelta(start,visit)<traversal->tolerance) {
         Point toAdd = Point(current.x,current.y-1);
-          if (visited.find(toAdd)==visited.end()) {
+          if (!visited(toAdd)) {
             traversal->add(toAdd);
           }
-      } 
+      }
     }
+
+    while(true) {
+      if (!traversal->empty() && visited(traversal->peek())) {
+        traversal->pop();
+      } else {
+        break;
+      }
+    }
+    // while(visited(traversal->peek())) {
+    //   traversal->pop();
+    //   if (traversal->empty())
+    //   break;
+    // }
     if (!traversal->empty()){
       current = traversal->pop();
-      visited.insert(std::pair<Point,bool>(current,true));
+      track.push_back(current);
+    } else {
+      current = Point(-1,-1);
     }
   return *this;
 }
@@ -105,7 +132,7 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
  */
 Point ImageTraversal::Iterator::operator*() {
   /** @todo [Part 1] */
-  return current;
+    return current;
 }
 
 /**
@@ -115,6 +142,9 @@ Point ImageTraversal::Iterator::operator*() {
  */
 bool ImageTraversal::Iterator::operator!=(const ImageTraversal::Iterator &other) {
   /** @todo [Part 1] */
-  return false;
+  if (other.current == this->current && other.traversal == this->traversal) {
+    return false;
+  }
+  return true;
 }
 

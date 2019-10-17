@@ -132,7 +132,6 @@ TEST_CASE("DFS iterator visits all points in the correct order", "[weight=1][par
   
   DFS t(png, startPoint, 0.2);
   ImageTraversal::Iterator it = t.begin();
-
   REQUIRE( *it == Point(0, 0) ); ++it;
   REQUIRE( *it == Point(0, 1) ); ++it;
   REQUIRE( *it == Point(0, 2) ); ++it;

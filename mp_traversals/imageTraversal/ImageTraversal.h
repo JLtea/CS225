@@ -4,7 +4,7 @@
 #pragma once
 
 #include <iterator>
-#include <map>
+#include <vector>
 #include "../cs225/HSLAPixel.h"
 #include "../cs225/PNG.h"
 #include "../Point.h"
@@ -34,6 +34,7 @@ public:
     Iterator & operator++();
     Point operator*();
     bool operator!=(const Iterator &other);
+    bool visited(Point visit);
 
     /** @todo [Part 1] */
     /** add member functions if neccesary*/
@@ -43,7 +44,8 @@ public:
     /** add private members here if neccesary*/
     Point current;
     ImageTraversal* traversal;
-    std::map<Point,bool> visited;
+    //std::map<Point,bool> visited;
+    std::vector<Point> track;
   };
 
   /**

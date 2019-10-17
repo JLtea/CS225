@@ -26,6 +26,7 @@ BFS::BFS(const PNG & png, const Point & start, double tolerance) {
   /** @todo [Part 1] */
   this->image = png;
   this->start = start;
+  visit.push(start);
   this->tolerance = tolerance;
 }
 
@@ -43,7 +44,8 @@ ImageTraversal::Iterator BFS::begin() {
  */
 ImageTraversal::Iterator BFS::end() {
   /** @todo [Part 1] */
-  return ImageTraversal::Iterator();
+  Point empty(-1,-1);
+  return ImageTraversal::Iterator(this, empty);
 }
 
 /**
@@ -77,8 +79,8 @@ Point BFS::peek() const {
  */
 bool BFS::empty() const {
   /** @todo [Part 1] */
-  if (visit.empty())
-  return true;
-
+  if (visit.empty()) {
+    return true;
+  }
   return false;
 }
