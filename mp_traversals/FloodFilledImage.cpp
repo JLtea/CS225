@@ -62,7 +62,6 @@ Animation FloodFilledImage::animate(unsigned frameInterval) const {
   animation.addFrame(*image);
   int frameCount = 0;
   for (int i = 0; i < (int)traversals.size(); i++) {
-    
     ImageTraversal* t = traversals.at(i);
     ColorPicker* c = colors.at(i);
 

@@ -225,6 +225,8 @@ class AVLTree
      */
     void getPreorderTraversal(const Node* subRoot, std::vector<K>& traversal) const;
 
+    int getHeight(Node* t);
+
     /** This variable is used for grading. */
     std::ostream* _out;
 
