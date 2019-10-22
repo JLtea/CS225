@@ -12,7 +12,7 @@ using namespace cs225;
  */
 HSLAPixel MyColorPicker::getColor(unsigned x, unsigned y) {
   /* @todo [Part 3] */
-  double h = 100;
+  double h = 340;
   double s = 100;
   double l = .5;
   unsigned f = 10;

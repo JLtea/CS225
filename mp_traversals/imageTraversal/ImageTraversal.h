@@ -8,6 +8,7 @@
 #include "../cs225/HSLAPixel.h"
 #include "../cs225/PNG.h"
 #include "../Point.h"
+#include <unordered_set>
 
 using namespace cs225;
 
@@ -45,7 +46,13 @@ public:
     Point current;
     ImageTraversal* traversal;
     //std::map<Point,bool> visited;
-    std::vector<Point> track;
+    struct Hash {
+      size_t operator() (const Point &p) const {                                          
+     
+        return p.x%30;
+      }
+    };
+    std::unordered_set <Point,Hash> track;
   };
 
   /**
@@ -87,5 +94,6 @@ public:
   double tolerance;
 
 private:
+  
   static double calculateDelta(const HSLAPixel & p1, const HSLAPixel & p2);  
 };

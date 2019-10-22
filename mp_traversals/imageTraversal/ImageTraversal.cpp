@@ -41,15 +41,19 @@ ImageTraversal::Iterator::Iterator(ImageTraversal* traversal, Point &current) {
   /** @todo [Part 1] */
   this->current = current;
   this->traversal = traversal;
-  track.push_back(current);
+  track.insert(current);
 }
 bool ImageTraversal::Iterator::visited(Point visit){
-  for (int i = 0; i < (int)track.size(); i++) {
-    if (track.at(i) == visit) {
-      return true;
-    }
-  }
+  // for (int i = 0; i < (int)track.size(); i++) {
+  //   if (track.at(i) == visit) {
+  //     return true;
+  //   }
+  // }
+  // return false;
+  if (track.find(visit) == track.end())
   return false;
+  
+  return true;
 }
 
 /**
@@ -118,7 +122,7 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
     // }
     if (!traversal->empty()){
       current = traversal->pop();
-      track.push_back(current);
+      track.insert(current);
     } else {
       current = Point(-1,-1);
     }
