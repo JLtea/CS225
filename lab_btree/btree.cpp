@@ -42,6 +42,15 @@ V BTree<K, V>::find(const BTreeNode* subroot, const K& key) const
      * a leaf and we didn't find the key in it, then we have failed to find it
      * anywhere in the tree and return the default V.
      */
+    //std::cout<<"Finding : "<<key<< " at "<< first_larger_idx <<std::endl;
+    if (subroot->elements[first_larger_idx].key == key) {
+        //std::cout<< "Value : " <<subroot->elements[first_larger_idx].value << std::endl;
+        return subroot->elements[first_larger_idx].value;
+    } else {
+        if (!subroot->children.empty())
+        return find(subroot->children[first_larger_idx], key);
+    }
+
 
     return V();
 }
@@ -80,6 +89,7 @@ void BTree<K, V>::insert(const K& key, const V& value)
 template <class K, class V>
 void BTree<K, V>::split_child(BTreeNode* parent, size_t child_idx)
 {
+    //std::cout<<"SPLITTTT"<<std::endl;
     /* Assume we are splitting the 3 6 8 child.
      * We want the following to happen.
      *     | 2 |
@@ -141,6 +151,39 @@ void BTree<K, V>::split_child(BTreeNode* parent, size_t child_idx)
 
 
     /* TODO Your code goes here! */
+    parent->children.insert(child_itr, new_right);
+    parent->elements.insert(elem_itr, child->elements[mid_elem_idx]);
+
+    //if (mid_elem_idx < child->elements.size()-1)
+    new_right->elements.assign(mid_elem_itr + 1, child->elements.end());
+    //if (mid_child_idx < child->children.size()-1)
+    new_right->children.assign(mid_child_itr, child->children.end());
+
+    new_left->elements.assign(new_left->elements.begin(), mid_elem_itr);
+    new_left->children.assign(new_left->children.begin(), mid_child_itr);
+
+
+
+    // for(auto it = mid_elem_itr; it != child->elements.end(); ++it) {
+    //     if (it != mid_elem_itr)
+    //     new_right->elements.insert(new_right->elements.begin(),*it);
+    //     //new_left->elements.erase(it);
+    // }
+    // for(auto it = mid_elem_itr; it != child->elements.end(); ++it) {
+    //     //new_right->elements.insert(new_right->elements.begin(),*it);
+    //     new_left->elements.erase(it);
+    // }
+    // for(auto it = mid_child_itr; it != child->children.end(); ++it) {
+    //     if (it != mid_child_itr)
+    //    new_right->children.insert(new_right->children.begin(),*it);
+    //    //new_left->children.erase(it);
+    // }
+    // for(auto it = mid_child_itr; it != child->children.end(); ++it) {
+    //    //new_right->children.insert(new_right->children.begin(),*it);
+    //    if (it != mid_child_itr)
+    //    new_left->children.erase(it);
+    // }
+
 }
 
 /**
@@ -161,8 +204,28 @@ void BTree<K, V>::insert(BTreeNode* subroot, const DataPair& pair)
      * After this call returns we need to check if the child became too large
      * and thus needs to be split to maintain order.
      */
+    if (root == nullptr) {
+        root = subroot;
+    }
 
     size_t first_larger_idx = insertion_idx(subroot->elements, pair);
+
+    if (find(pair.key) == V()) {
+        if (subroot->children.empty()) {
+            typename std::vector<DataPair>::iterator it;
+            it = subroot->elements.begin();
+            subroot->elements.insert(it + first_larger_idx, pair);
+            // std::cout<<"FLI : "<<first_larger_idx<<std::endl;
+            // std::cout<<"Inserted :"<<subroot->elements[first_larger_idx].key<< " at "<< std::distance(subroot->elements.begin(),it + first_larger_idx) <<std::endl;
+            // std::cout<<subroot->elements[first_larger_idx].value<<std::endl;
+        } else {
+            insert(subroot->children[first_larger_idx], pair);
+            if (subroot->children[first_larger_idx]->elements.size() >= order) {
+                split_child(subroot,first_larger_idx);
+            }
+        }
+    }
+    
 
     /* TODO Your code goes here! */
 }

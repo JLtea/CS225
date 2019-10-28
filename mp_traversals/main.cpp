@@ -22,7 +22,7 @@ int main() {
   //   submit Part 3 of this assignment -- uncomment it when you're ready.
   
   PNG png;      
-  png.readFromFile("vans.png");
+  png.readFromFile("vans2.png");
   
   FloodFilledImage image(png);
   DFS dfs(png, Point(40, 40), 0.5);
