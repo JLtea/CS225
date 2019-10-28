@@ -42,7 +42,7 @@ template<class K, class V>
 void verify_finds(std::vector<std::pair<K, V>>& data, BTree< K, V>& b) {
     for (auto& key_val : data) {
         V ret = b.find(key_val.first);
-        std::cout<< "Expected: "<<key_val.second<<", ret: "<<ret<<std::endl;
+        //std::cout<< "Expected: "<<key_val.second<<", ret: "<<ret<<std::endl;
        REQUIRE(key_val.second == ret);
     }
 }

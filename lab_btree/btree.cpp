@@ -43,7 +43,7 @@ V BTree<K, V>::find(const BTreeNode* subroot, const K& key) const
      * anywhere in the tree and return the default V.
      */
     //std::cout<<"Finding : "<<key<< " at "<< first_larger_idx <<std::endl;
-    if (subroot->elements[first_larger_idx].key == key) {
+    if (first_larger_idx < subroot->elements.size() && subroot->elements[first_larger_idx].key == key) {
         //std::cout<< "Value : " <<subroot->elements[first_larger_idx].value << std::endl;
         return subroot->elements[first_larger_idx].value;
     } else {
@@ -211,7 +211,7 @@ void BTree<K, V>::insert(BTreeNode* subroot, const DataPair& pair)
     size_t first_larger_idx = insertion_idx(subroot->elements, pair);
 
     if (find(pair.key) == V()) {
-        if (subroot->children.empty()) {
+        if (subroot->is_leaf) {
             typename std::vector<DataPair>::iterator it;
             it = subroot->elements.begin();
             subroot->elements.insert(it + first_larger_idx, pair);
