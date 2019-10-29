@@ -248,6 +248,7 @@ class KDTree
     /** Internal representation, root and size **/
     KDTreeNode *root;
     size_t size;
+    vector<Point<Dim>> sorted;
 
     /** Helper function for grading */
     int getPrintData(KDTreeNode * subroot) const;
@@ -259,6 +260,12 @@ class KDTree
     /**
      * @todo Add your helper functions here.
      */
+    Point<Dim> quickselect(vector<Point<Dim>> &toSort, int medIdx, int from, int to, int currDim);
+
+    int partition(vector<Point<Dim>> &toSort, int from, int to, int currDim);
+
+    void makeTree(KDTreeNode* subRoot, vector<Point<Dim>> &toSort, int from, int to, int currDim);
+
 };
 
 #include "kdtree.hpp"
