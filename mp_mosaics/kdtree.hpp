@@ -56,54 +56,92 @@ KDTree<Dim>::KDTree(const vector<Point<Dim>>& newPoints)
     /**
      * @todo Implement this function!
      */
-    // vector<Point<Dim>> copy;
-    // copy = newPoints;
-    // root = new KDTreeNode;
-    // makeTree(root, copy,0, newPoints.size() - 1, 0);
+    vector<Point<Dim>> copy;
+    for (int i = 0; i < (int)newPoints.size(); i++) {
+      copy.push_back(newPoints[i]);
+    }
+    //copy = newPoints;
+    root = makeTree(copy,0, newPoints.size()-1, 0);
     
 }
 template <int Dim>
-void KDTree<Dim>::makeTree(KDTreeNode* subRoot, vector<Point<Dim>> &toSort, int from, int to, int currDim) {
-  if (to-from == 0) {
-    return;
+typename KDTree<Dim>::KDTreeNode* KDTree<Dim>::makeTree(vector<Point<Dim>> &toSort, int from, int to, int currDim) {
+  int range = to-from;
+  int medIdx = range/2;
+    if (range == 0) {
+    KDTreeNode* newNode = new KDTreeNode(toSort[from]);
+    return newNode;
   }
-  int medIdx = (to-from)/2;
-  subRoot->point = quickselect(toSort, medIdx, from, to, currDim);
-  subRoot->left = new KDTreeNode;
-  makeTree(subRoot->left, toSort, from, medIdx -1, (currDim+1)%Dim);
-  subRoot->right = new KDTreeNode;
-  makeTree(subRoot->right,toSort, medIdx +1, to, (currDim+1)%Dim);
-  // subRoot->left = quickselect(toSort, from, medIdx -1, (currDim+1)%Dim);
-  // subRoot->right = quickselect(toSort, medIdx +1, to, (currDim+1)%Dim);
+  if (range == 1) {
+    KDTreeNode* newNode = new KDTreeNode(quickselect(toSort, medIdx + 1, from, to, currDim));
+    KDTreeNode* rightNode = new KDTreeNode(toSort[to]);
+    newNode->right = rightNode;
+    return newNode;
+  }
+  if (range < 0) {
+    return NULL;
+  }
+  KDTreeNode* newNode = new KDTreeNode(quickselect(toSort, medIdx + 1, from, to, currDim));
+  
+  newNode->left = makeTree(toSort, from, from + medIdx -1, (currDim+1)%Dim);
+  newNode->right = makeTree(toSort, from + medIdx +1, to, (currDim+1)%Dim);
+  return newNode;
 
 }
+// template <int Dim>
+// void KDTree<Dim>::makeTree(KDTreeNode* subRoot, vector<Point<Dim>> &toSort, int from, int to, int currDim) {
+//   if (to-from <= 0) {
+//     return;
+//   }
+//   int medIdx = (to-from)/2;
+//   subRoot->point = quickselect(toSort, medIdx + 1, from, to, currDim);
+//   if (to-from > 0){
+//   subRoot->left = new KDTreeNode;
+//   makeTree(subRoot->left, toSort, from, medIdx -1, (currDim+1)%Dim);
+//   subRoot->right = new KDTreeNode;
+//   makeTree(subRoot->right,toSort, medIdx +1, to, (currDim+1)%Dim);
+//   }
+
+// }
 
 template <int Dim>
-Point<Dim> KDTree<Dim>::quickselect(vector<Point<Dim>> &toSort, int medIdx, int from, int to, int currDim) {
-  if (medIdx > 0 && medIdx <= to - from) {
+Point<Dim> KDTree<Dim>::quickselect(vector<Point<Dim>> &toSort, int k, int from, int to, int currDim) {
+  //std::cout<<"from = "<<from<<", to = "<<to<<", medIdx = " <<medIdx<<std::endl;
+  if (k > 0 && k <= to - from +1) {
     int index = partition(toSort, from, to, currDim);
-    if (index == medIdx) {
+    //std::cout<<"quickselect"<<toSort[index][currDim]<<std::endl;
+    if (index - from == k - 1) {
+      // std::cout<<"quickselect "<<toSort[index][currDim]<<std::endl;
+      // std::cout<<"index : "<<index<< ", k: " <<k<<std::endl;
+      // std::cout<<"from : "<<from<<std::endl;
       return toSort[index];
     }
-    if (index - from > medIdx) {
-      return quickselect(toSort, medIdx, from, index - 1, currDim);
-      
-    } else {
-      return quickselect(toSort, medIdx, index + 1, medIdx - index + from, currDim);
+    if (index - from > k - 1) {
+      //std::cout<<"from = "<<from<<", to = "<<to<< ", index = "<<index<<", medIdx = " <<medIdx<<std::endl;
+      return quickselect(toSort, k, from, index - 1, currDim);
     }
+      //std::cout<<"from = "<<from<<", to = "<<to<< ", index = "<<index<<", medIdx = " <<medIdx<<std::endl;
+  return quickselect(toSort, k - index + from - 1, index + 1, to, currDim);
   }
-  return NULL;
+  return Point<Dim>();
 }
 template <int Dim>
 int KDTree<Dim>::partition(vector<Point<Dim>> &toSort, int from, int to, int currDim) {
   int track = from;
-  for (int curr = from; curr < to-1; curr++) {
+  //std::cout<<"from = "<<from<<", to = "<<to<<std::endl;
+  for (int curr = from; curr <= to-1; curr++) {
     if (toSort[curr][currDim] < toSort[to][currDim] || (toSort[curr][currDim] == toSort[to][currDim] && toSort[curr]<toSort[to])) {
       swap(toSort[track],toSort[curr]);
       track++;
     }
+    //std::cout<<"curr = "<<curr<<", track "<<track<<std::endl;
+    // if (toSort[curr] < toSort[to]) {
+    //   swap(toSort[track],toSort[curr]);
+    //   track++;
+    // }
   }
   swap(toSort[track], toSort[to]);
+  //std::cout<<"partition " <<toSort[track][currDim]<<std::endl;
   return track;
 }
 
