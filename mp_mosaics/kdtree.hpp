@@ -177,6 +177,35 @@ Point<Dim> KDTree<Dim>::findNearestNeighbor(const Point<Dim>& query) const
      * @todo Implement this function!
      */
 
-    return Point<Dim>();
+    return findNearest(root,query);
+}
+
+template <int Dim>
+Point<Dim> KDTree<Dim>::findNearest(KDTreeNode* subRoot,const Point<Dim>& query) const
+{
+    if (subRoot->left == NULL && subRoot->right == NULL) {
+      return subRoot->point;
+    }
+    Point<Dim> best = subRoot->point;
+    if (subRoot->left != NULL) {
+      Point<Dim> pot = findNearest(subRoot->left, query);
+      if (shouldReplace(query,best,pot)) {
+        best = pot;
+      }
+    }
+    if (subRoot->right != NULL) {
+      Point<Dim> pot = findNearest(subRoot->right, query);
+      if (shouldReplace(query,best,pot)) {
+        best = pot;
+      }
+    }
+    // if (smallerDimVal(query,subRoot->point, currDim)) {
+    //   if (subRoot->left != NULL) {
+    //     Point<Dim> pot = findNearest(query,subRoot->left, (currDim+1)%Dim);
+    //   }
+    // } else if (subRoot->right != NULL) {
+    //   findNearest(query,subRoot->right, (currDim+1)%Dim);
+    // }
+    return best;
 }
 
