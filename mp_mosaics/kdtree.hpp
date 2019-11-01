@@ -18,9 +18,10 @@ bool KDTree<Dim>::smallerDimVal(const Point<Dim>& first,
     if (first[curDim] < second[curDim]) {
       return true;
     } else if (first[curDim] == second[curDim]) {
-      if (first < second) {
-        return true;
-      }
+      // if (first < second) {
+      //   return true;
+      // }
+      return first < second;
     }
 
     return false;
@@ -176,36 +177,82 @@ Point<Dim> KDTree<Dim>::findNearestNeighbor(const Point<Dim>& query) const
     /**
      * @todo Implement this function!
      */
-
-    return findNearest(root,query);
+    
+    return findNearest(root,query, 0);
 }
 
 template <int Dim>
-Point<Dim> KDTree<Dim>::findNearest(KDTreeNode* subRoot,const Point<Dim>& query) const
+Point<Dim> KDTree<Dim>::findNearest(KDTreeNode* subRoot,const Point<Dim>& query, int currDim) const
 {
     if (subRoot->left == NULL && subRoot->right == NULL) {
+      // if (Dim ==2)
+      // std::cout<<"LEAF : ("<<subRoot->point[0]<<","<<subRoot->point[Dim-1]<< " currDim: "<<currDim<<std::endl;
       return subRoot->point;
     }
-    Point<Dim> best = subRoot->point;
-    if (subRoot->left != NULL) {
-      Point<Dim> pot = findNearest(subRoot->left, query);
-      if (shouldReplace(query,best,pot)) {
-        best = pot;
-      }
-    }
-    if (subRoot->right != NULL) {
-      Point<Dim> pot = findNearest(subRoot->right, query);
-      if (shouldReplace(query,best,pot)) {
-        best = pot;
-      }
-    }
-    // if (smallerDimVal(query,subRoot->point, currDim)) {
-    //   if (subRoot->left != NULL) {
-    //     Point<Dim> pot = findNearest(query,subRoot->left, (currDim+1)%Dim);
+    // Point<Dim> best = subRoot->point;
+    // if (subRoot->left != NULL) {
+    //   Point<Dim> pot = findNearest(subRoot->left, query);
+    //   if (shouldReplace(query,best,pot)) {
+    //     best = pot;
     //   }
-    // } else if (subRoot->right != NULL) {
-    //   findNearest(query,subRoot->right, (currDim+1)%Dim);
     // }
+    // if (subRoot->right != NULL) {
+    //   Point<Dim> pot = findNearest(subRoot->right, query);
+    //   if (shouldReplace(query,best,pot)) {
+    //     best = pot;
+    //   }
+    // }
+    Point<Dim> best;
+    int radius = 0;
+    if (smallerDimVal(query,subRoot->point, currDim)) {
+      if (subRoot->left != NULL) {
+        best = findNearest(subRoot->left,query, (currDim+1)%Dim);
+        if (shouldReplace(query, best, subRoot->point)) {
+          best = subRoot->point;
+        }
+        for (int i = 0; i < Dim; i++) {
+          radius += pow((best[i] - query[i]),2);
+        }
+        //  if (Dim == 3)
+        //  std::cout<<"currPoint : ("<<subRoot->point[0]<<","<<subRoot->point[Dim-2]<<","<<subRoot->point[Dim-1]<<")  radius : "<<radius<<"dist: "<<pow(subRoot->point[currDim]-best[currDim],2)<< " currDim: "<<currDim<<std::endl;
+        if (pow(subRoot->point[currDim]-query[currDim],2) <= radius) {
+          if (subRoot->right != NULL) {
+            // if (Dim == 3)
+        //  std::cout<<"currPointRad : ("<<subRoot->right->point[0]<<","<<subRoot->right->point[Dim-2]<<","<<subRoot->right->point[Dim-1]<<")  radius : "<<radius<< " currDim: "<<currDim<<std::endl;
+            Point<Dim> pot = findNearest(subRoot->right, query, (currDim+1)%Dim);
+            if (shouldReplace(query, best, pot)) {
+              best = pot;
+            }
+          }
+        }
+      } else {
+        return subRoot->point;
+      }
+      
+    } else if (subRoot->right != NULL) {
+      best = findNearest(subRoot->right, query, (currDim+1)%Dim);
+      if (shouldReplace(query, best, subRoot->point)) {
+          best = subRoot->point;
+      }
+      for (int i = 0; i < Dim; i++) {
+        radius += pow((best[i] - query[i]),2);
+      }
+      //  if (Dim == 3)
+      //  std::cout<<"currPoint : ("<<subRoot->point[0]<<","<<subRoot->point[Dim-2]<<","<<subRoot->point[Dim-1]<<")  radius : "<<radius<<"dist: "<<pow(subRoot->point[currDim]-best[currDim],2)<< " currDim: "<<currDim<<std::endl;
+      if (pow(subRoot->point[currDim]-query[currDim],2) <= radius) {
+        if (subRoot->left != NULL) {
+          // if(Dim == 3)
+        // std::cout<<"currPointRad : ("<<subRoot->left->point[0]<<","<<subRoot->left->point[Dim-2]<<","<<subRoot->left->point[Dim-1]<<")  radius : "<<radius<< " currDim: "<<currDim<<std::endl;
+          Point<Dim> pot = findNearest(subRoot->left, query, (currDim+1)%Dim);
+          if (shouldReplace(query, best, pot)) {
+            best = pot;
+          }
+        }
+      }
+    } else {
+      return subRoot->point;
+    }
+  
     return best;
 }
 

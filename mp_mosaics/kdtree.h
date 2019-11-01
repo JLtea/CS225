@@ -266,7 +266,7 @@ class KDTree
 
     KDTreeNode* makeTree(vector<Point<Dim>> &toSort, int from, int to, int currDim);
     
-    Point<Dim> findNearest(KDTreeNode* subRoot,const Point<Dim>& query) const;
+    Point<Dim> findNearest(KDTreeNode* subRoot,const Point<Dim>& query, int currDim) const;
 
 };
 
