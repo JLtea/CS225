@@ -80,8 +80,30 @@ void LPHashTable<K, V>::insert(K const& key, V const& value)
      * Also, don't forget to mark the cell for probing with should_probe!
      */
 
-    (void) key;   // prevent warnings... When you implement this function, remove this line.
-    (void) value; // prevent warnings... When you implement this function, remove this line.
+    // (void) key;   // prevent warnings... When you implement this function, remove this line.
+    // (void) value; // prevent warnings... When you implement this function, remove this line.
+    elems++;
+    if (elems/size >= 0.7)
+    resizeTable();
+    size_t h = hashes::hash(key, size);
+            size_t i = 0;
+            size_t idx = h; 
+            while (table[idx] != NULL)
+            {
+                ++i;
+                idx = (h + i) % size;
+            }
+            table[idx] = new std::pair<K, V> (key,value);
+            should_probe[idx] = true;
+    // size_t i = hashes::hash(key,size);
+    // //std::pair<K,V> toInsert(key,value);
+    // while(should_probe[i] == true) {
+    //     i = (i+1)%size;
+    // }
+    
+        
+    // table[i] = new std::pair<K, V> (key,value);
+    // should_probe[i] = true;
 }
 
 template <class K, class V>
@@ -90,6 +112,13 @@ void LPHashTable<K, V>::remove(K const& key)
     /**
      * @todo: implement this function
      */
+    int i = findIndex(key);
+    //std::pair<K,V> toInsert(key,value);
+    if ( i != -1 && table[i] != NULL) {
+        delete table[i];
+        table[i] = NULL;
+        elems--;
+    }
 }
 
 template <class K, class V>
@@ -101,7 +130,13 @@ int LPHashTable<K, V>::findIndex(const K& key) const
      *
      * Be careful in determining when the key is not in the table!
      */
-
+    //size_t i = hashes::hash(key,size);
+    //std::pair<K,V> toInsert(key,value);
+    for(size_t j = 0; j < size; j++) {
+        if (table[j] != NULL && table[j]->first == key) {
+            return j;
+        }
+    }
     return -1;
 }
 
@@ -159,4 +194,56 @@ void LPHashTable<K, V>::resizeTable()
      *
      * @hint Use findPrime()!
      */
+    size_t newSize = findPrime(size * 2);
+    std::pair<K, V>** temp = new std::pair<K, V>*[newSize];
+    delete[] should_probe;
+    should_probe = new bool[newSize];
+    for (size_t i = 0; i < newSize; i++) {
+        temp[i] = NULL;
+        should_probe[i] = false;
+    }
+    for (size_t slot = 0; slot < size; slot++) {
+        if (table[slot] != NULL) {
+            size_t h = hashes::hash(table[slot]->first, newSize);
+            size_t i = 0;
+            size_t idx = h; 
+            while (temp[idx] != NULL)
+            {
+                ++i;
+                idx = (h + i) % newSize;
+            }
+            temp[idx] = table[slot];
+            should_probe[idx] = true;
+        }
+    }
+
+    delete[] table;
+    // don't delete elements since we just moved their pointers around
+    table = temp;
+    size = newSize;
+
+    // if (elems/size >= 0.7) {
+    //     size_t oldSize = size;
+    //     size = findPrime(2*size);
+    //     std::pair<K, V>** newList = new std::pair<K, V>*[size];
+    //     delete[] should_probe;
+    //     should_probe = new bool [size];
+    //     for (size_t i = 0; i < size; i++) {
+    //     table[i] = NULL;
+    //     should_probe[i] = false;
+    //     }
+    //     for (int i = 0; i < (int)oldSize; i++) {
+    //         if (table[i] != NULL) {
+    //             size_t j = hashes::hash(table[i]->first,size);
+    //             while(should_probe[j] == true) {
+    //                 i = (i+1)%size;
+    //             }
+    //             newList[j] = new std::pair<K, V> (table[i]->first,table[i]->second);
+    //             should_probe[j] = true;
+    //         }
+    //     }  
+    //     delete[] table;
+    //     table = newList;
+    // }
+    
 }

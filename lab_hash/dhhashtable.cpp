@@ -83,6 +83,32 @@ void DHHashTable<K, V>::insert(K const& key, V const& value)
 
     (void) key;   // prevent warnings... When you implement this function, remove this line.
     (void) value; // prevent warnings... When you implement this function, remove this line.
+    elems++;
+    if (elems/size >= 0.7)
+    resizeTable();
+    // size_t i = hashes::hash(key,size);
+    // size_t j = hashes::secondary_hash(key,size);
+    // size_t idx = i;
+    // size_t x = 0;
+    // while(should_probe[idx] == true) {
+    //     x++;
+    //     idx = (i + x*j)%size;
+    // }
+    // if (table[idx] == NULL) {
+    //     table[idx] = new std::pair<K, V> (key,value);
+    //     should_probe[idx] = true;
+    // }
+    size_t h = hashes::hash(key, size);
+    size_t jump = hashes::secondary_hash(key, size);
+    size_t i = 0;
+    size_t idx = h; 
+    while (table[idx] != NULL)
+    {
+        ++i;
+        idx = (h + jump*i) % size;
+    }
+    table[idx] = new std::pair<K, V> (key,value);
+    should_probe[idx] = true;
 }
 
 template <class K, class V>
@@ -91,6 +117,12 @@ void DHHashTable<K, V>::remove(K const& key)
     /**
      * @todo Implement this function
      */
+    int i = findIndex(key);
+    if ( i != -1 && table[i] != NULL) {
+        delete table[i];
+        table[i] = NULL;
+        elems--;
+    }
 }
 
 template <class K, class V>
@@ -99,6 +131,11 @@ int DHHashTable<K, V>::findIndex(const K& key) const
     /**
      * @todo Implement this function
      */
+    for (size_t i = 0;i < size; i++) {
+        if (table[i] != NULL && table[i]->first == key) {
+            return i;
+        }
+    }
     return -1;
 }
 
