@@ -56,6 +56,7 @@ void SCHashTable<K, V>::insert(K const& key, V const& value)
      *
      */
     elems++;
+    if ((double)elems/(double)size >= 0.7)
     resizeTable();
     size_t i = hashes::hash(key,size);
     //std::pair<K,V> toInsert(key,value);
@@ -154,18 +155,15 @@ void SCHashTable<K, V>::resizeTable()
      *
      * @hint Use findPrime()!
      */
-    if (elems/size >= 0.7) {
-        size_t oldSize = size;
-        size = findPrime(2*size);
-        std::list<std::pair<K, V>>* newList = new std::list<std::pair<K, V>>[size];
-        for (int i = 0; i < (int)oldSize; i++) {
-            for (typename std::list<std::pair<K,V>>::iterator it = table[i].begin(); it != table[i].end(); ++it) {
-                size_t i = hashes::hash(it->first,size);
-                newList[i].emplace_front(it->first,it->second);
-            }
-        }  
-        delete[] table;
-        table = newList;
-
-    }
+    size_t oldSize = size;
+    size = findPrime(2*size);
+    std::list<std::pair<K, V>>* newList = new std::list<std::pair<K, V>>[size];
+    for (int i = 0; i < (int)oldSize; i++) {
+        for (typename std::list<std::pair<K,V>>::iterator it = table[i].begin(); it != table[i].end(); ++it) {
+            size_t i = hashes::hash(it->first,size);
+            newList[i].emplace_front(it->first,it->second);
+        }
+    }  
+    delete[] table;
+    table = newList;
 }

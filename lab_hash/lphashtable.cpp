@@ -83,7 +83,7 @@ void LPHashTable<K, V>::insert(K const& key, V const& value)
     // (void) key;   // prevent warnings... When you implement this function, remove this line.
     // (void) value; // prevent warnings... When you implement this function, remove this line.
     elems++;
-    if (elems/size >= 0.7)
+    if ((double)elems/(double)size >= 0.7)
     resizeTable();
     size_t h = hashes::hash(key, size);
             size_t i = 0;
