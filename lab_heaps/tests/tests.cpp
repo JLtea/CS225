@@ -15,13 +15,15 @@ template <typename V>
 void helpTestHeapifyDown(const vector<V> & vals)
 {
     heap<V> _heap;
-    for(size_t i = 0; i < vals.size(); ++i)
+    for(size_t i = 0; i < vals.size(); ++i){
         _heap.push(vals[i]);
-
+        //cout<<"pushed "<<vals[i]<<endl;
+    }
     vector<V> sorted = vals;
     sort(sorted.begin(), sorted.end());
 
     for(size_t i = 0; i < sorted.size(); i++)
+        //cout<<"idx " << i << " : " << _heap.pop();
         REQUIRE(sorted[i] == _heap.pop());
 }
 
@@ -134,6 +136,8 @@ TEST_CASE("test_build_heap_1", "[valgrind][weight=1]")
 	vector<int> test;
 	myHeap.getElems(test);
 	vector<int> expected = {1, 2, 3};
+    // for(size_t i = 0; i < test.size(); i++)
+    //     cout<<"idx " << i << " : " << test[i] << " ";
 	bool matches = (test == expected);
 	REQUIRE(matches == true);
 }
