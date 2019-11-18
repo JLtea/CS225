@@ -10,6 +10,8 @@
 
 #include <algorithm> /* I wonder why this is included... */
 #include <fstream>
+#include <iostream>
+
 
 using std::string;
 using std::vector;
@@ -23,6 +25,19 @@ using std::ifstream;
 AnagramDict::AnagramDict(const string& filename)
 {
     /* Your code goes here! */
+    ifstream wordsFile(filename);
+    string word;
+    if (wordsFile.is_open()) {
+    /* Reads a line from `wordsFile` into `word` until the file ends. */
+        while (getline(wordsFile, word)) {
+            string sorted = word;
+            sort(sorted.begin(), sorted.end());
+            vector<string> curr = dict[sorted];
+            if (std::find(curr.begin(), curr.end(), word) == curr.end()) {
+                curr.push_back(word);
+            }
+        }
+    }
 }
 
 /**
@@ -32,6 +47,14 @@ AnagramDict::AnagramDict(const string& filename)
 AnagramDict::AnagramDict(const vector<string>& words)
 {
     /* Your code goes here! */
+    for (string word : words) {
+        string sorted = word;
+            sort(sorted.begin(), sorted.end());
+            vector<string> curr = dict[sorted];
+            if (std::find(curr.begin(), curr.end(), word) == curr.end()) {
+                dict[sorted].push_back(word);
+            }
+    }
 }
 
 /**
@@ -43,6 +66,11 @@ AnagramDict::AnagramDict(const vector<string>& words)
 vector<string> AnagramDict::get_anagrams(const string& word) const
 {
     /* Your code goes here! */
+    string sorted = word;
+    sort(sorted.begin(), sorted.end());
+    if (dict.find(sorted) != dict.end()) {
+        return dict.find(sorted)->second;
+    }
     return vector<string>();
 }
 
@@ -55,5 +83,11 @@ vector<string> AnagramDict::get_anagrams(const string& word) const
 vector<vector<string>> AnagramDict::get_all_anagrams() const
 {
     /* Your code goes here! */
-    return vector<vector<string>>();
+    vector<vector<string>> allGrams;
+    for (auto pair : dict) {
+        if (pair.second.size() > 1) {
+            allGrams.push_back(pair.second);
+        }
+    }
+    return allGrams;
 }
