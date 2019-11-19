@@ -1,6 +1,8 @@
 /* Your code here! */
 #include "maze.h"
 #include "dsets.h"
+#include <queue>
+#include <algorithm>
 /**
  * Creates Empty Maze
  */
@@ -88,8 +90,8 @@ void SquareMaze::makeMaze(int width, int height) {
         down.push_back(true);
     }
     srand ( time(NULL) );
-    int edges = 0;
-    while(edges != w*h - 1) {
+    int walls = 0;
+    while(walls != w*h - 1) {
         int randCell = rand()%(w*h);
         int randWall = rand()%2;
         
@@ -98,14 +100,14 @@ void SquareMaze::makeMaze(int width, int height) {
             if (temp == -1 || temp != set.find(randCell + 1)) {
                 set.setunion(randCell,randCell+1);
                 right[randCell] = false;
-                edges++;
+                walls++;
             }
         } else if (randWall == 1 && randCell<=(h*w - w)) {
             int temp = set.find(randCell);
             if (temp == -1 || temp != set.find(randCell + w)) {
                 set.setunion(randCell,randCell + w);
                 down[randCell] = false;
-                edges++;
+                walls++;
             }
         }
     }
@@ -124,12 +126,18 @@ void SquareMaze::setWall(int x, int y, int dir, bool exists) {
     }
 }
 
-std::vector<int> SquareMaze::solveMaze() {
-    return std::vector<int>();
-}
 
 int SquareMaze::getCell(int x, int y) const{
     return y*w + x + 1;
+}
+
+std::vector<int> SquareMaze::solveMaze() {
+    // std::vector<int> maxDist;
+    // std::vector<int> currPath;
+    // for (int end = w*h - w + 1; end <= w*h; end++) {
+        
+    // }
+    return std::vector<int>();
 }
 
 /* make maze in order*/
