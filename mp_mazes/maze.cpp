@@ -87,43 +87,49 @@ cs225::PNG* SquareMaze::drawMazeWithSolution() {
         //std::cout<< dir<<std::endl;
         if (dir == 0) {
             destX++;
-            int max = x + 10;
+            int max = x + 11;
             for(; x < max; x++) {
                 if (x < (int)maze->width()&& y < (int)maze->height()){
                 cs225::HSLAPixel & pixel = maze->getPixel(x,y);
                 pixel = red;
                 }
             }
+            x--;
         } else if (dir == 1) {
             destY++;
-            int max = y + 10;
+            int max = y + 11;
             for(; y < max; y++) {
                 if (x < (int)maze->width()&& y < (int)maze->height()){
                 cs225::HSLAPixel & pixel = maze->getPixel(x,y);
                 pixel = red;
                 }
             }
+            y--;
         } else if (dir == 2) {
             destX--;
-            int min = x - 10;
+            int min = x - 11;
             for(; x > min; x--) {
                 if (x < (int)maze->width()&& y < (int)maze->height()) {
                 cs225::HSLAPixel & pixel = maze->getPixel(x,y);
                 pixel = red;
                 }
             }
+            x++;
         } else if (dir == 3) {
             destY--;
-            int min = y - 10;
+            int min = y - 11;
             for(; y > min; y--) {
                 if (x < (int)maze->width()&& y < (int)maze->height()) {
                 cs225::HSLAPixel & pixel = maze->getPixel(x,y);
                 pixel = red;
                 }
             }
+            y++;
         }
         
     }
+    // cs225::HSLAPixel & pixel = maze->getPixel(x,y);
+    // pixel = red;
     for (int k = 1; k <=9; k++) {
         cs225::HSLAPixel & pixel = maze->getPixel(destX*10+k, 10*(destY+1));
         pixel.l = 1;
