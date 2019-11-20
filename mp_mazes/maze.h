@@ -12,6 +12,7 @@ class SquareMaze {
     void makeMaze(int width, int height);
     void setWall(int x, int y, int dir, bool exists);
     std::vector<int> solveMaze();
+    cs225::PNG* drawCreativeMaze();
     
     private:
     int w;

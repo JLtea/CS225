@@ -3,6 +3,7 @@
 #include "dsets.h"
 #include <stack>
 #include <algorithm>
+#include <math.h>
 /**
  * Creates Empty Maze
  */
@@ -68,6 +69,18 @@ cs225::PNG* SquareMaze::drawMaze() const {
                     cs225::HSLAPixel &pixel = maze->getPixel(x*10+k, (y+1)*10);
                     pixel.l = 0;
                 }
+            }
+        }
+    }
+    return maze;
+}
+cs225::PNG* SquareMaze::drawCreativeMaze() {
+    cs225::PNG* maze = drawMaze();
+    for (int x = 0; x < (int)maze->width(); x++) {
+        for (int y = 0; y < (int)maze->height(); y++) {
+            if (sqrt(x^2 + y^2) > maze->width()/2) {
+                cs225::HSLAPixel &pixel = maze->getPixel(x, y);
+                pixel.l = 0;
             }
         }
     }
