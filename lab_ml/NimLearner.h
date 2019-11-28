@@ -76,7 +76,10 @@ public:
    */
   const Graph & getGraph() const;
 
+  //void makeEdges(int tokens);
+
 private:
   Graph g_;
   Vertex startingVertex_;
+  int tokens;
 };

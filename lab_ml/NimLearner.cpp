@@ -5,7 +5,7 @@
 
 #include "NimLearner.h"
 #include <ctime>
-
+#include <string>
 
 /**
  * Constructor to create a game of Nim with `startingTokens` starting tokens.
@@ -26,7 +26,70 @@
  */
 NimLearner::NimLearner(unsigned startingTokens) : g_(true, true) {
     /* Your code goes here! */
+    this->tokens = startingTokens;
+    for (int t = startingTokens; t >= 0; t--) {
+      Vertex p1 = std::string("p1-") + std::to_string(t);
+      g_.insertVertex(p1);
+      Vertex p2 = std::string("p2-") + std::to_string(t);
+      g_.insertVertex(p2);
+      //std::cout<<"Looping"<<std::endl;
+    }
+    for (int t = startingTokens; t >= 0; t--) {
+      Vertex from = "p1-" + std::to_string(t);
+      Vertex to = "p2-" + std::to_string(t - 1);
+      g_.insertEdge(from,to);
+      g_.setEdgeWeight(from,to,0);
+      if (t > 1) {
+        to = "p2-" + std::to_string(t - 2);
+        g_.insertEdge(from,to);
+        g_.setEdgeWeight(from,to,0);
+      }
+      from = "p2-" + std::to_string(t);
+      to = "p1-" + std::to_string(t - 1);
+      g_.insertEdge(from,to);   
+      g_.setEdgeWeight(from,to,0);
+      if (t > 1) {
+        to = "p1-" + std::to_string(t - 2);
+        g_.insertEdge(from,to);
+        g_.setEdgeWeight(from,to,0);
+      }  
+    }
+    //makeEdges(startingTokens);
 }
+
+// void NimLearner::makeEdges(int tokens) {
+//   if (tokens == 0) {
+//     return;
+//   }
+//   // Vertex from = "p1-" + std::to_string(tokens);
+//   // Vertex to = "p2-" + std::to_string(tokens - 1);
+//   // g_.insertEdge(from,to);  
+//   // Vertex from = "p2-" + std::to_string(tokens);
+//   // Vertex to = "p1-" + std::to_string(tokens - 1);
+//   // g_.insertEdge(from,to);
+  
+
+//   unsigned currP = player;
+//   unsigned nextP;
+//   if (currP == 1){
+//     nextP = 2;
+//   }
+//   else {
+//     nextP = 1;
+//   }
+
+//   Vertex from = "p" + std::to_string(currP) + "-" + std::to_string(tokens);
+//   Vertex to = "p" + std::to_string(nextP) + "-" + std::to_string(tokens - 1);
+//   g_.insertEdge(from,to);
+
+//   makeEdges(nextP,tokens - 1);
+//   if (tokens>1) {
+//     Vertex to = "p" + std::to_string(nextP) + "-" + std::to_string(tokens - 2);
+//     g_.insertEdge(from,to);
+
+//     makeEdges(nextP,tokens - 2);
+//   }
+// }
 
 /**
  * Plays a random game of Nim, returning the path through the state graph
@@ -40,6 +103,30 @@ NimLearner::NimLearner(unsigned startingTokens) : g_(true, true) {
 std::vector<Edge> NimLearner::playRandomGame() const {
   vector<Edge> path;
  /* Your code goes here! */
+ Vertex curr = std::string("p1-") + std::to_string(this->tokens);
+ bool player1 = true;
+ int t = this->tokens;
+ while(t > 0) {
+   Vertex next;
+   if (player1) {
+     next = std::string("p2-");
+   } else {
+     next = std::string("p1-");
+   }
+   player1 = !player1;
+   if (t > 1) {
+     int choose = rand()%2 + 1;
+     t -= choose;
+     next = next + std::to_string(t);
+   } else {
+     t -= 1;
+     next = next + std::to_string(t);
+   }
+   //std::cout<<"curr: "<<curr<<" next: "<<next<<std::endl;
+   Edge e = g_.getEdge(curr, next);
+   path.push_back(e);
+   curr = next;
+ }
   return path;
 }
 
@@ -61,6 +148,30 @@ std::vector<Edge> NimLearner::playRandomGame() const {
  */
 void NimLearner::updateEdgeWeights(const std::vector<Edge> & path) {
  /* Your code goes here! */
+ bool win = true;
+ for (int i = path.size() - 1; i >= 0; i--) {
+   Edge curr = path[i];
+   int w = g_.getEdgeWeight(curr.source,curr.dest);
+   //std::cout<<w<<std::endl;
+   if (win) {
+     //std::cout <<"yes";
+     g_.setEdgeWeight(curr.source,curr.dest, w + 1);
+   } else {
+     //std::cout<< "nosir";
+     g_.setEdgeWeight(curr.source,curr.dest, w - 1);
+   }
+   win = !win;
+ }
+    // for (Edge e : path) {
+    //   Vertex from = e.source;
+    //   Vertex to = e.dest;
+    //   int w = g_.getEdgeWeight(from, to);
+    //   if (g_.getEdgeLabel(from, to) == "WIN") {
+    //     g_.setEdgeWeight(from, to, w + 1);
+    //   } else if (g_.getEdgeLabel(from, to) == "LOSE") {
+    //     g_.setEdgeWeight(from, to, w - 1);
+    //   }
+    // }
 }
 
 /**
