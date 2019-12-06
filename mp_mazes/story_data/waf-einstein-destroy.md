@@ -1,1 +1,0 @@
-Einstein he tears down every part and destroys all evidence of his work. This is for the better of humanity.
