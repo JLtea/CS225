@@ -22,6 +22,23 @@ NetworkFlow::NetworkFlow(Graph & startingGraph, Vertex source, Vertex sink) :
   g_(startingGraph), residual_(Graph(true,true)), flow_(Graph(true,true)), source_(source), sink_(sink) {
 
   // YOUR CODE HERE
+  vector<Vertex> verts = startingGraph.getVertices();
+  vector<Edge> edgs = startingGraph.getEdges();
+  for (Vertex v : verts) {
+    residual_.insertVertex(v);
+    flow_.insertVertex(v);
+  }
+  for (Edge e : edgs) {
+    residual_.insertEdge(e.source, e.dest);
+    residual_.setEdgeWeight(e.source,e.dest, e.getWeight());
+    residual_.setEdgeLabel(e.source,e.dest,"Forward");
+    flow_.insertEdge(e.source, e.dest);
+    flow_.setEdgeWeight(e.source, e.dest, 0);
+    residual_.insertEdge(e.dest, e.source);
+    residual_.setEdgeWeight(e.dest,e.source, 0);
+    residual_.setEdgeLabel(e.dest,e.source,"Backward");
+  }
+  maxFlow_ = 0;
 }
 
   /**
@@ -84,7 +101,17 @@ bool NetworkFlow::findAugmentingPath(Vertex source, Vertex sink, std::vector<Ver
 
 int NetworkFlow::pathCapacity(const std::vector<Vertex> & path) const {
   // YOUR CODE HERE
-  return 0;
+  int min;
+  for (int i = 0; i < (int)path.size() - 1; i++) {
+    Edge eR = residual_.getEdge(path[i], path[i + 1]);
+    //Edge eF = flow_.getEdge(paths[i], paths[i + 1]);
+    if (eR.getLabel() != "Backward") {
+      if (i == 0 || eR.getWeight() < min) {
+        min = eR.getWeight();
+      }
+    }
+  }
+  return min;
 }
 
   /**
@@ -97,6 +124,24 @@ int NetworkFlow::pathCapacity(const std::vector<Vertex> & path) const {
 
 const Graph & NetworkFlow::calculateFlow() {
   // YOUR CODE HERE
+  vector<Vertex> path;
+  while(findAugmentingPath(source_, sink_, path)) {
+    int cap = pathCapacity(path);
+    for (int i = 0; i < (int)path.size() - 1; i++) {
+      if (residual_.getEdgeLabel(path[i],path[i+1]) == "Forward") {
+        Edge eF = flow_.getEdge(path[i],path[i+1]);
+        flow_.setEdgeWeight(eF.source,eF.dest,eF.getWeight() + cap);
+      } else {
+        Edge eF = flow_.getEdge(path[i + 1],path[i]);
+        flow_.setEdgeWeight(eF.source,eF.dest,eF.getWeight() - cap);
+      }
+      Edge eR = residual_.getEdge(path[i],path[i+1]);
+      residual_.setEdgeWeight(eR.source,eR.dest,eR.getWeight() - cap);
+      eR = residual_.getEdge(path[i + 1],path[i]);
+      residual_.setEdgeWeight(eR.source,eR.dest,eR.getWeight() + cap);
+    }
+    maxFlow_ += cap;
+  }
   return flow_;
 }
 
