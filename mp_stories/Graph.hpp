@@ -11,7 +11,7 @@
 template <class V, class E>
 unsigned int Graph<V,E>::numVertices() const {
   // TODO: Part 2
-  return 0;
+  return vertexMap.size();
 }
 
 
@@ -23,7 +23,8 @@ unsigned int Graph<V,E>::numVertices() const {
 template <class V, class E>
 unsigned int Graph<V,E>::degree(const V & v) const {
   // TODO: Part 2
-  return 0;
+  
+  return adjList.at(v.key()).size();
 }
 
 
@@ -36,6 +37,8 @@ template <class V, class E>
 V & Graph<V,E>::insertVertex(std::string key) {
   // TODO: Part 2
   V & v = *(new V(key));
+  vertexMap.emplace(key,v);
+  adjList[key] = std::list<edgeListIter>();
   return v;
 }
 
@@ -47,6 +50,13 @@ V & Graph<V,E>::insertVertex(std::string key) {
 template <class V, class E>
 void Graph<V,E>::removeVertex(const std::string & key) {
   // TODO: Part 2
+  auto it = vertexMap.find(key);
+  vertexMap.erase(it);
+  std::list<edgeListIter> lit = adjList[key];
+  for (auto e : lit) {
+    removeEdge(e->get().source(), e->get().dest());
+  }
+  adjList.erase(adjList.find(key));
 }
 
 
@@ -60,7 +70,9 @@ template <class V, class E>
 E & Graph<V,E>::insertEdge(const V & v1, const V & v2) {
   // TODO: Part 2
   E & e = *(new E(v1, v2));
-
+  edgeListIter it= edgeList.insert(edgeList.begin(), e);
+  adjList[v1.key()].push_back(it);
+  adjList[v2.key()].push_back(it);
   return e;
 }
 
@@ -74,6 +86,48 @@ E & Graph<V,E>::insertEdge(const V & v1, const V & v2) {
 template <class V, class E>
 void Graph<V,E>::removeEdge(const std::string key1, const std::string key2) {  
   // TODO: Part 2
+  // for (edgeListIter lit : adjList[key1]) {
+  //   if (lit->get().source() == key1 && lit->get().dest() == key2) {
+  //     edgeList.erase(lit);
+  //     adjList[key1].erase(lit);
+  //     delete lit;
+  //   }
+  // }
+  for (auto it = adjList[key1].begin(); it != adjList[key1].end(); ++it) {
+    auto lit = *it;
+    if (lit->get().directed()) {
+      if (lit->get().source() == key1 && lit->get().dest() == key2) {
+        //edgeList.erase(lit);
+        adjList[key1].erase(it);
+      }
+    } else {
+      if (lit->get().source() == key2 || lit->get().dest() == key2) {
+        //edgeList.erase(lit);
+        adjList[key1].erase(it);
+      }
+    }
+  }
+  for (auto it = adjList[key2].begin(); it != adjList[key2].end(); ++it) {
+    auto lit = *it;
+    if (lit->get().directed()) {
+      if (lit->get().source() == key1 && lit->get().dest() == key2) {
+        edgeList.erase(lit);
+        adjList[key2].erase(it);
+      }
+    } else {
+      if (lit->get().source() == key1 || lit->get().dest() == key1) {
+        edgeList.erase(lit);
+        adjList[key2].erase(it);
+      }
+    }
+  }  
+  // for (auto it = adjList[key2].begin(); it != adjList[key2].end(); ++it) {
+  //   auto lit = *it;
+  //   if (lit->get().source() == key1 && lit->get().dest() == key2) {
+  //     edgeList.erase(lit);
+  //     adjList[key2].erase(it);
+  //   }
+  // }
 }
 
 
@@ -85,6 +139,7 @@ void Graph<V,E>::removeEdge(const std::string key1, const std::string key2) {
 template <class V, class E>
 void Graph<V,E>::removeEdge(const edgeListIter & it) {
   // TODO: Part 2
+  edgeList.erase(it);
 }
 
 
@@ -98,6 +153,9 @@ template <class V, class E>
 const std::list<std::reference_wrapper<E>> Graph<V,E>::incidentEdges(const std::string key) const {
   // TODO: Part 2
   std::list<std::reference_wrapper<E>> edges;
+  for(edgeListIter it : adjList.at(key)){
+    edges.push_back(*it);
+  }
   return edges;
 }
 
@@ -112,5 +170,27 @@ const std::list<std::reference_wrapper<E>> Graph<V,E>::incidentEdges(const std::
 template <class V, class E>
 bool Graph<V,E>::isAdjacent(const std::string key1, const std::string key2) const {
   // TODO: Part 2
+  for (edgeListIter lit : adjList.at(key1)) {
+    if (lit->get().directed()) {
+      if (lit->get().dest() == key2) {
+        return true;
+      }
+    } else {
+      if (lit->get().dest() == key2 || lit->get().source() == key2) {
+        return true;
+      }
+    }
+  }
+  for (edgeListIter lit : adjList.at(key2)) {
+    if (lit->get().directed()) {
+      if (lit->get().source() == key1) {
+        return true;
+      }
+    } else {
+      if (lit->get().dest() == key1 || lit->get().source() == key1) {
+        return true;
+      }
+    } 
+  }
   return false;
 }

@@ -21,8 +21,36 @@ template <class V, class E>
 std::list<std::string> Graph<V,E>::shortestPath(const std::string start, const std::string end) {
   // TODO: Part 3
   std::list<std::string> path;
+  std::unordered_map<string, string> prev;
+  std::unordered_map<string, bool> visited;
+  std::queue<string> q;
 
+  q.push(start);
+  prev[start] = "start";
 
+  for(auto it : vertexMap){
+    prev[it.first] = "empty";
+  }
+
+  while(!q.empty()){
+    string curr = q.front();
+    q.pop();
+    for(auto it : vertexMap) {
+      if(isAdjacent(curr,it.first) && prev[it.first] == "empty") {
+        q.push(it.first);
+        prev[it.first] = curr;
+      }
+    }
+  }
+
+  string temp = end;
+  path.push_back(end);
+  while(temp != start){
+    path.push_back(prev[temp]);
+    temp = prev[temp];
+  }
+  std::reverse(path.begin(),path.end());
+  
   return path;
 }
 
